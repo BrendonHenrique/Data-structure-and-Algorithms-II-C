@@ -60,7 +60,5 @@ int main(int argc, char const *argv[])
 	
 	}
 	
-	printf("\nListando...\n");
-	
 	return 0;
 }
