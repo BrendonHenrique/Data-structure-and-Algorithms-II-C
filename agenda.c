@@ -1,33 +1,33 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+
+//struct que pode conter qualquer variável , entretanto as variáveis deverão ser incluidas na memória de pbuffer
 typedef struct control{
 	
-	int ContadorDePessoas;
+	int ContadorDePessoas; 
 	int TotalDePessoas;
 	int OpcaoDoMenu;
 	int i;
 	
 }variaveis;
 
+//Struct para armazenar nome e numero
 typedef struct user{
 	char Nome[20];
 	int Num;
 	
 }user;
 
-user *ptrUser;//ptrUser//usuarioAtual
+user *ptrUser;//usuarioAtual
 variaveis *ptrControl; 
-user *aux;//aux//primeiroUsuario
+user *aux;//primeiroUsuario
 void *pbuffer;
 
 
 void imprimirUm(user *ptrUser){
 
-	//for(aux->controle.ContadorDePessoas = 0 ; aux->controle.ContadorDePessoas < aux->controle.TotalDePessoas ; aux->controle.ContadorDePessoas++ ){
 	printf("|Nome: %s",ptrUser->Nome);
 	printf("\n|Numero: %d",ptrUser->Num); 
-	ptrUser++;
 	
 }
 
@@ -51,42 +51,47 @@ void inserir(user  *ptrUser){
 
 	printf("\n|=========================[Inserir]=======================|\n");
 	
+	// ao inserir um usuario aumenta a variável de quantidade de pessoas
 	ptrControl->TotalDePessoas++;
-		
+
+	//realocação de memória em pbuffer , o qual irá receber a primeira posição das variáveis mais a quantidade total de pessoas vezes o tamanho de usuarios		
 	pbuffer = realloc(pbuffer,(sizeof(variaveis) + ptrControl->TotalDePessoas * sizeof(user)));
-	
+
+	//ptrUser aponta pra pbuffer e pula a primeira posição que é a das variáveis de controle	
 	ptrUser = pbuffer+sizeof(variaveis);
 	
+	// aux recebe a posição de ptrUser para o ponteiro não perder a referência da primeira posição de usuarios
 	aux = ptrUser;
+
+	//ptrControl também aponta pra pbuffer porém , ele aponta para a posição a qual tem as variáveis 
+	// mesmo caso que ptrUser porém o ptrUser aponta pra posição a frente das variáveis , as quais o ptrControl manipula
 	ptrControl = pbuffer;
 	
-	
-	for (ptrControl->ContadorDePessoas = 0; ptrControl->ContadorDePessoas < ptrControl->TotalDePessoas-1; ptrControl->ContadorDePessoas++){
-		ptrUser++;
-	}
-	
-	
-	ptrControl->ContadorDePessoas = 0 ; 
-	
+	//Faz um loop em ptrUser  , até que ptrControl->ContadorDePessoas vá de 0 , até ptrControl->TotalDePessoas-1 , ou seja , até o ultimo usuario inserido 
+	for(ptrControl->ContadorDePessoas = 0; ptrControl->ContadorDePessoas < ptrControl->TotalDePessoas-1; ptrControl->ContadorDePessoas++,ptrUser++){}
+
 	printf("|Nome:");
 	scanf("%s",ptrUser->Nome);
 	printf("|Numero:");
 	scanf("%d",&ptrUser->Num);
-	//imprimirUm(ptrUser);
 	printf("|=========================================================|\n");
 }
 
 int main(int argc, char const *argv[])
 {
 	
+	//aloca a primeira posição de memória de pbuffer para caber as variaveis que estão na struct variaveis
 	pbuffer = malloc(sizeof(variaveis));
+
+	//ptrControl aponta para a posição alocada para as variaveis
 	ptrControl = pbuffer;
 	
+	// testa se pbuffer conseguiu alocar
 	if(pbuffer == NULL){
 		return -1;
 	}
-
-	ptrUser = pbuffer ;
+	
+	// Inicializa contador de pessoas e total de pessoas
 	ptrControl->ContadorDePessoas = 0 ; 
 	ptrControl->TotalDePessoas =  0 ; 
 	
@@ -118,13 +123,20 @@ int main(int argc, char const *argv[])
 				break;
 			
 			case 3:
+				
+				free(pbuffer);
+				free(ptrUser);
+				free(ptrControl);
+
 				return 0;
 				break;
 			
+			default:
+				
+				printf("\nOpção incorreta!");
+
 		}			
 	}
 
-	imprimirTodos();
-	
 	return 0;
 }
