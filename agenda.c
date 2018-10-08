@@ -247,33 +247,30 @@ void SelectionSort(variaveis *ptrControl){
 
 void InsertionSort(variaveis *ptrControl){
 	
-				
 	ptrControl = pbuffer ;
 	ptrUser = pbuffer + sizeof(variaveis);
 
-	for (ptrControl->j = 1; ptrControl->j < ptrControl->TotalDePessoas ; ptrControl->j++)
+	for (ptrControl->i = 1; ptrControl->i < ptrControl->TotalDePessoas ; ptrControl->i++)
 	{
 
-		strcpy(ptrControl->temporario,ptrUser[ptrControl->j].Nome);
+		strcpy(ptrControl->temporario,ptrUser[ptrControl->i].Nome);
+	
+		for(ptrControl->j = ptrControl->i - 1 ; ptrControl->j >= 0 ; ptrControl->j--)
+		{
 
-		ptrControl->i = ptrControl->j - 1 ;
-
-		while(ptrControl->i >= 0 )
-		{	
-
-			if((strcmp(ptrUser[ptrControl->j].Nome,ptrControl->temporario))<=0){
+			if((strcmp(ptrControl->temporario,ptrUser[ptrControl->j].Nome))>=0){
 				break;
 			}
-		
-			strcpy(ptrUser[ptrControl->i + 1].Nome,ptrUser[ptrControl->i].Nome);
-			ptrControl->i = ptrControl->i - 1;
 
+			strcpy(ptrUser[ptrControl->j+1].Nome,ptrUser[ptrControl->j].Nome);
 		}
-		strcpy(ptrUser[ptrControl->i+1].Nome , ptrControl->temporario);
 
+		strcpy(ptrUser[ptrControl->j+1].Nome , ptrControl->temporario);
+	
 	}
 
 }
+
 
 int main(int argc, char const *argv[])
 {
@@ -344,9 +341,9 @@ int main(int argc, char const *argv[])
 				
 				cls();
 				if(ptrControl->ContadorDePessoas > 0 ){
-				 bubblesort(ptrControl);
+					bubblesort(ptrControl);
 				}else{
-					printf("| Existe apenas 1 usuario impossivel ordenar");
+					printf("| Quantidade de usuarios insuficiente ");
 				}
 
 				break;
@@ -355,16 +352,20 @@ int main(int argc, char const *argv[])
 
 				cls();
 				if(ptrControl->ContadorDePessoas > 0 ){
-				SelectionSort(ptrControl);
+					SelectionSort(ptrControl);
 				}else{
-					printf("| Existe apenas 1 usuario impossivel ordenar");
+					printf("| Quantidade de usuarios insuficiente ");
 				}
 				
 				break;
 	
 			case 7:
 				cls();
-				InsertionSort(ptrControl);
+				if(ptrControl->ContadorDePessoas > 0) {
+					InsertionSort(ptrControl);
+				}else{
+					printf("| Quantidade de usuarios insuficiente ");
+				}
 				
 				break;
 
