@@ -271,6 +271,108 @@ void InsertionSort(variaveis *ptrControl){
 
 }
 
+/*
+#################### Quicksort Padrão ####################
+
+void troca(int *a,int*b){
+	int aux  = *a;
+	*a = *b;
+	*b = aux;
+}
+int particao(int arr[], int low, int high){
+	int pivot = arr[high];
+	int i = (low - 1);
+	for (int j = low; j <= high - 1 ; j++)
+	{
+		if(arr[j]<= pivot){
+			i++;
+			troca(&arr[i],&arr[j]);
+		}
+	}
+	troca(&arr[i+1],&arr[high]);
+	return (i+1);
+}
+void quicksort(int arr[], int low , int high){
+	if(low < high){
+		int pi = particao(arr,low,high);
+
+		quicksort(arr,low,pi-1);
+		quicksort(arr,pi+1,high);
+	}
+}
+void printArray(int arr[],int size){
+	for (int i = 1; i < size; i++)
+	{
+		printf("%d ",arr[i]);
+		printf("\n");
+	}
+}
+int main(int argc, char const *argv[])
+{
+	int vet[10]= {0,4,8,9,2,5,7,3,1};
+
+	//divide o tamanho do vetor pelo tipo de dado contido nele 
+	//resulta na quantidade total de elementos no vetor
+	int n = (int)(sizeof(vet)/sizeof(int));;
+	quicksort(vet,0,n-1);
+	printArray(vet,n);
+	return 0;
+}
+
+#################### QuickSort Adaptado para Strings  ####################
+
+void  troca( char a[],char b[]){
+	char aux[20] ;
+	strcpy(aux,a);
+	strcpy(a,b);
+	strcpy(b,aux);
+}
+//essa é a funcao do quicksort , entra nela a string, e inteiros do incio e do fim
+void QuickSort(char strings[][20],int left , int right){
+	int i,j;
+	char *x;
+	char temp[20];
+	i = left;
+	j = right;
+	x = strings[(left+right)/2];
+	do{
+		while((strcmp(strings[i],x) <0) && (i < right)){
+			i++;
+		}
+		while((strcmp(strings[j],x) >0) &&(j > left)){
+			j--;
+		}
+		if(i<=j){
+			troca(strings[i],strings[j]);
+			i++;
+			j--;
+		}
+	}while(i<=j);
+	if(left<j){
+		QuickSort(strings,left,j);
+	}	
+	if(i<right){
+		QuickSort(strings,i,right);
+	}
+}
+//essa funcao incializa a quicksort , entram nela a string e a quantidade de strings
+void QuickSortMain(char strings[][20],int contador){
+	QuickSort(strings,0,contador-1);
+}
+int main(int argc, char const *argv[])
+{	
+  int i;
+  char str[][20] = { "Brendon","Carlos","Amanda","Joao"};
+  QuickSortMain(str, 4);
+  for(i=0; i<4; i++) {
+     printf("%s ", str[i]);
+  }
+  
+	return 0;
+}
+
+*/
+
 
 int main(int argc, char const *argv[])
 {
