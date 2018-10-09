@@ -178,11 +178,11 @@ void excluir(variaveis *ptrControl)
 
 void cls()
  {
-  	//Código para limpar a tela 
+     //Código para limpar a tela , irá manter a tela sempre limpa, diminuindo a poluição visual e facilitando a utilização do usuário
 
-     #ifdef LINUX
+     //testa se o sistema operacional está definido como LINUX ou WINDOWS
      //código especifico para linux
-     //system ("clear");//poderia ser este mas escolhi este outro pois é mais a cara do C
+     #ifdef LINUX
      printf("\e[H\e[2J");
      #elif defined WIN32
      //código específico para windows
@@ -272,7 +272,7 @@ void InsertionSort(variaveis *ptrControl){
 }
 
 /*
-#################### Quicksort Padrão ####################
+#################### Quicksort Padrão (Ordena inteiros) ####################
 
 void troca(int *a,int*b){
 	int aux  = *a;
@@ -327,7 +327,7 @@ void  troca( char a[],char b[]){
 	strcpy(a,b);
 	strcpy(b,aux);
 }
-//essa é a funcao do quicksort , entra nela a string, e inteiros do incio e do fim
+//essa é a funcao do quicksort , entra nela a string e inteiros que são  index do incio e do fim
 void QuickSort(char strings[][20],int left , int right){
 	int i,j;
 	char *x;
@@ -355,7 +355,7 @@ void QuickSort(char strings[][20],int left , int right){
 		QuickSort(strings,i,right);
 	}
 }
-//essa funcao incializa a quicksort , entram nela a string e a quantidade de strings
+//essa funcao incializa a quicksort , entram nela o vetor de string e a quantidade de strings
 void QuickSortMain(char strings[][20],int contador){
 	QuickSort(strings,0,contador-1);
 }
@@ -370,7 +370,6 @@ int main(int argc, char const *argv[])
   
 	return 0;
 }
-
 */
 
 
@@ -444,6 +443,9 @@ int main(int argc, char const *argv[])
 				cls();
 				if(ptrControl->ContadorDePessoas > 0 ){
 					bubblesort(ptrControl);
+					printf("|=========================================================|\n");
+					printf("| Agenda Ordenada!");	
+
 				}else{
 					printf("| Quantidade de usuarios insuficiente ");
 				}
@@ -455,6 +457,9 @@ int main(int argc, char const *argv[])
 				cls();
 				if(ptrControl->ContadorDePessoas > 0 ){
 					SelectionSort(ptrControl);
+					printf("|=========================================================|\n");
+					printf("| Agenda Ordenada!");
+					
 				}else{
 					printf("| Quantidade de usuarios insuficiente ");
 				}
@@ -465,14 +470,18 @@ int main(int argc, char const *argv[])
 				cls();
 				if(ptrControl->ContadorDePessoas > 0) {
 					InsertionSort(ptrControl);
+					printf("|=========================================================|\n");
+					printf("| Agenda Ordenada!");
 				}else{
 					printf("| Quantidade de usuarios insuficiente ");
 				}
 				
 				break;
 
-			case 8:
 
+			case 8:
+				cls();
+				printf("|====================== Até logo! :D =====================|\n");
 				free(pbuffer);
 
 				return 1;
