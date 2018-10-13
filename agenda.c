@@ -2,19 +2,21 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <math.h>
 
 typedef struct control{	
 	int ContadorDePessoas; 
 	int ContadorDeExclusao;
 	int TotalDePessoas;
 	int OpcaoDoMenu;
-	int i,j;
+	int i,j,pivot_id;
 	char NomeDeBusca[20];
 	char NomeDeExclusao[20];
 	bool NaoEncontrado;
-	char minimo[20],temporario[20];
+	char minimo[20],temporario[20],temporario2[20];
 	int minimo_id;
-
+	int i_aux;
+	
 }variaveis;
 
 //Struct para armazenar nome e numero
@@ -28,10 +30,7 @@ user *ptrUser;//usuarioAtual
 variaveis *ptrControl; 
 user *aux;//primeiroUsuario
 void *pbuffer;
-
-
-
-
+user *userPivot;
 
 
 /* Funções de controle */
@@ -43,7 +42,6 @@ void imprimirUm(user *ptrUser){
 	printf("\n|Numero: %s",ptrUser->Num); 
 	
 }
-
 void imprimirTodos(){
 	
 	printf("\n|====================[Lista De Contatos]==================|");
@@ -62,7 +60,6 @@ void imprimirTodos(){
 
 	printf("\n|=========================================================|\n");
 }
-
 void inserir(user  *ptrUser){
 
 
@@ -93,7 +90,6 @@ void inserir(user  *ptrUser){
 	scanf("%s",ptrUser->Num);
 	printf("|=========================================================|\n");
 }
-
 void buscar (variaveis *ptrControl){
 	
 	printf("\n|===================[Busca De Contatos]===================|\n");
@@ -126,7 +122,6 @@ void buscar (variaveis *ptrControl){
 	
 	printf("\n|=========================================================|\n");
 }
- 
 void excluir(variaveis *ptrControl)
 {
 
@@ -174,10 +169,8 @@ void excluir(variaveis *ptrControl)
 	}
 
 }
-
-
 void cls()
- {
+{
      //Código para limpar a tela , irá manter a tela sempre limpa, diminuindo a poluição visual e facilitando a utilização do usuário
 
      //testa se o sistema operacional está definido como LINUX ou WINDOWS
@@ -191,7 +184,35 @@ void cls()
      printf("\e[H\e[2J");
      #endif
  
- }
+}
+void troca(user *user1, user *user2){
+
+	user auxiliar = *user1;
+	*user1 = *user2;
+	*user2 = auxiliar;
+}
+int particionar (user *ptrUser , int low, int high )
+{
+   	ptrControl->j = high;
+	userPivot = &ptrUser[ptrControl->j];  
+ 
+    ptrControl->i = low - 1;
+
+    for (ptrControl->j = low; ptrControl->j <= high - 1; ptrControl->j++)
+    {
+
+        if ((strcmp(ptrUser[ptrControl->j].Nome , userPivot->Nome))<0)
+        {
+            ptrControl->i++;
+
+			troca(&ptrUser[ptrControl->i],&ptrUser[ptrControl->j]);	
+		}
+    }
+
+	troca(&ptrUser[ptrControl->i+1],&ptrUser[high]);	
+		
+    return (ptrControl->i + 1);
+}
 
 
 /*Funcoes de ordenação*/
@@ -207,17 +228,13 @@ void bubblesort (variaveis *PtrControl){
 	
 			if((strcmp(ptrUser[ptrControl->i].Nome,ptrUser[ptrControl->j].Nome))>0)
 			{
-
-				strcpy(ptrControl->NomeDeBusca,ptrUser[ptrControl->i].Nome);
-				strcpy(ptrUser[ptrControl->i].Nome,ptrUser[ptrControl->j].Nome);
-				strcpy(ptrUser[ptrControl->j].Nome,ptrControl->NomeDeBusca);
+				troca(&ptrUser[ptrControl->i],&ptrUser[ptrControl->j]);
 			}
 
 		}
 		
 	}
 }
-
 void SelectionSort(variaveis *ptrControl){
 
 	ptrControl = pbuffer ;
@@ -227,6 +244,8 @@ void SelectionSort(variaveis *ptrControl){
 	{
 
 		strcpy(ptrControl->minimo , ptrUser[ptrControl->i].Nome);
+		strcpy(ptrControl->temporario2 , ptrUser[ptrControl->i].Num);
+
 
 		for (ptrControl->j = ptrControl->i+1 ; ptrControl->j <  ptrControl->TotalDePessoas ; ptrControl->j++)
 		{
@@ -234,14 +253,16 @@ void SelectionSort(variaveis *ptrControl){
 			if((strcmp(ptrUser[ptrControl->j].Nome,ptrControl->minimo))<0)
 			{
 				strcpy(ptrControl->minimo,ptrUser[ptrControl->j].Nome);
+				strcpy(ptrControl->temporario2,ptrUser[ptrControl->j].Num);
+		
 				ptrControl->minimo_id = ptrControl->j;
 
 			}
 		
 		}
-		strcpy(ptrControl->temporario , ptrUser[ptrControl->i].Nome);
-		strcpy(ptrUser[ptrControl->i].Nome , ptrUser[ptrControl->minimo_id].Nome);
-		strcpy(ptrUser[ptrControl->minimo_id].Nome, ptrControl->temporario) ;
+
+		troca(&ptrUser[ptrControl->i],&ptrUser[ptrControl->minimo_id]);
+
 	}
 }
 
@@ -254,7 +275,8 @@ void InsertionSort(variaveis *ptrControl){
 	{
 
 		strcpy(ptrControl->temporario,ptrUser[ptrControl->i].Nome);
-	
+		strcpy(ptrControl->temporario2,ptrUser[ptrControl->i].Num);
+
 		for(ptrControl->j = ptrControl->i - 1 ; ptrControl->j >= 0 ; ptrControl->j--)
 		{
 
@@ -262,115 +284,33 @@ void InsertionSort(variaveis *ptrControl){
 				break;
 			}
 
-			strcpy(ptrUser[ptrControl->j+1].Nome,ptrUser[ptrControl->j].Nome);
+			//strcpy(ptrUser[ptrControl->j+1].Nome,ptrUser[ptrControl->j].Nome);
+			troca(&ptrUser[ptrControl->j+1],&ptrUser[ptrControl->j]);
+
+
 		}
 
 		strcpy(ptrUser[ptrControl->j+1].Nome , ptrControl->temporario);
+		strcpy(ptrUser[ptrControl->j+1].Num , ptrControl->temporario2);
+	}
+
+}
+
+void QuickSort (user *ptrUser ,int low , int high){
 	
-	}
-
-}
-
-/*
-#################### Quicksort Padrão (Ordena inteiros) ####################
-
-void troca(int *a,int*b){
-	int aux  = *a;
-	*a = *b;
-	*b = aux;
-}
-int particao(int arr[], int low, int high){
-	int pivot = arr[high];
-	int i = (low - 1);
-	for (int j = low; j <= high - 1 ; j++)
-	{
-		if(arr[j]<= pivot){
-			i++;
-			troca(&arr[i],&arr[j]);
-		}
-	}
-	troca(&arr[i+1],&arr[high]);
-	return (i+1);
-}
-void quicksort(int arr[], int low , int high){
 	if(low < high){
-		int pi = particao(arr,low,high);
+		ptrControl->pivot_id = particionar(ptrUser,low,high);
 
-		quicksort(arr,low,pi-1);
-		quicksort(arr,pi+1,high);
+		QuickSort(ptrUser , low , ptrControl->pivot_id - 1);
+		QuickSort(ptrUser , ptrControl->pivot_id + 1 , high);
 	}
-}
-void printArray(int arr[],int size){
-	for (int i = 1; i < size; i++)
-	{
-		printf("%d ",arr[i]);
-		printf("\n");
-	}
-}
-int main(int argc, char const *argv[])
-{
-	int vet[10]= {0,4,8,9,2,5,7,3,1};
 
-	//divide o tamanho do vetor pelo tipo de dado contido nele 
-	//resulta na quantidade total de elementos no vetor
-	int n = (int)(sizeof(vet)/sizeof(int));;
-	quicksort(vet,0,n-1);
-	printArray(vet,n);
-	return 0;
 }
-
-#################### QuickSort Adaptado para Strings  ####################
-
-void  troca( char a[],char b[]){
-	char aux[20] ;
-	strcpy(aux,a);
-	strcpy(a,b);
-	strcpy(b,aux);
+void QuickSortMain(void *pbuffer){
+	ptrControl = pbuffer;
+	ptrUser = pbuffer + sizeof(variaveis);
+	QuickSort(ptrUser,0,ptrControl->TotalDePessoas-1);
 }
-//essa é a funcao do quicksort , entra nela a string e inteiros que são  index do incio e do fim
-void QuickSort(char strings[][20],int left , int right){
-	int i,j;
-	char *x;
-	char temp[20];
-	i = left;
-	j = right;
-	x = strings[(left+right)/2];
-	do{
-		while((strcmp(strings[i],x) <0) && (i < right)){
-			i++;
-		}
-		while((strcmp(strings[j],x) >0) &&(j > left)){
-			j--;
-		}
-		if(i<=j){
-			troca(strings[i],strings[j]);
-			i++;
-			j--;
-		}
-	}while(i<=j);
-	if(left<j){
-		QuickSort(strings,left,j);
-	}	
-	if(i<right){
-		QuickSort(strings,i,right);
-	}
-}
-//essa funcao incializa a quicksort , entram nela o vetor de string e a quantidade de strings
-void QuickSortMain(char strings[][20],int contador){
-	QuickSort(strings,0,contador-1);
-}
-int main(int argc, char const *argv[])
-{	
-  int i;
-  char str[][20] = { "Brendon","Carlos","Amanda","Joao"};
-  QuickSortMain(str, 4);
-  for(i=0; i<4; i++) {
-     printf("%s ", str[i]);
-  }
-  
-	return 0;
-}
-*/
 
 
 int main(int argc, char const *argv[])
@@ -402,7 +342,8 @@ int main(int argc, char const *argv[])
 		printf("| 5-BubbleSort\n");
 		printf("| 6-SelectionSort\n");
 		printf("| 7-InsertionSort\n");
-		printf("| 8-Sair\n");
+		printf("| 8-QuickSort\n");
+		printf("| 9-Sair\n");
 		printf("|=========================================================|\n");
 		
 		printf("|Selecione uma das opcoes: ");
@@ -480,13 +421,27 @@ int main(int argc, char const *argv[])
 
 
 			case 8:
+
 				cls();
-				printf("|====================== Até logo! :D =====================|\n");
+				if(ptrControl->ContadorDePessoas > 0) {
+					QuickSortMain(pbuffer);
+					printf("|=========================================================|\n");
+					printf("| Agenda Ordenada!");
+				}else{
+					printf("| Quantidade de usuarios insuficiente ");
+				}
+				
+				break;
+							
+			case 9:
+				cls();
+				printf("|====================== Ate logo! :D =====================|\n");
 				free(pbuffer);
 
 				return 1;
 				break;
-					
+			
+
 			default:
 				
 				printf("\nOpção incorreta!");
