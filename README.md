@@ -1,3 +1,3 @@
 # AED1
-Git contém listas de exercicios " Ponteiros e alocação dinâmica de memória" e "Lista de revisao" 
-da disciplina Algoritimos e estrutura de dados 1 , e suas respectivas resoluções.
+Repositório contem algumas resoluções de listas de exercicios da disciplina de Algoritimos e estrutura de dados.
+E a agenda.c é o trabalho principal para a disciplina.
