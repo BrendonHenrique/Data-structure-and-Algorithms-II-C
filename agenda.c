@@ -9,60 +9,83 @@ typedef struct control{
 	int ContadorDeExclusao;
 	int TotalDePessoas;
 	int OpcaoDoMenu;
-	int i,j,pivot_id;
+	int i,j,k,pivot_id;
 	char NomeDeBusca[20];
 	char NomeDeExclusao[20];
 	bool NaoEncontrado;
 	char minimo[20],temporario[20],temporario2[20];
 	int minimo_id;
 	int i_aux;
-	
+	int n1,n2,med;
+	bool ordenado;
+
 }variaveis;
 
-//Struct para armazenar nome e numero
 typedef struct user{
 	char Nome[20];
 	char Num[10];
 }user;
 
 //Variaveis globais 
-user *ptrUser;//usuarioAtual
-variaveis *ptrControl; 
-user *aux;//primeiroUsuario
-void *pbuffer;
-user *userPivot;
+user *ptrUser;//ptrUser é uma variável utilizada para guardar todas as informações dos usuários 
+variaveis *ptrControl;//ptrControl Guarda todas as variaveis utilizadas no controle dos usuários  
+user *aux;//aux é a variável utilizada para guardar a posição do primeiro usuário
+void *pbuffer;//pbuffer é a variável a qual todos os usuários estão guardados
+user *userPivot;//userPivot foi criada para auxiliar a execução do QuickSort
+user *ptrUserL;//ptrUserL  foi criado para auxiliar a execução do MergeSort
+user *ptrUserR;//ptrUserR  foi criado para auxiliar a execução do MergeSort
 
 
 /* Funções de controle */
 
-// imprime apenas o  usuario passado pelo parametro   
-void imprimirUm(user *ptrUser){
+     //Código para limpar a tela , irá manter a tela sempre limpa, diminuindo a poluição visual e facilitando a utilização do usuário
+void cls()
+{
 
+     //testa se o sistema operacional está definido como LINUX ou WINDOWS
+     //código especifico para linux
+     #ifdef LINUX
+     printf("\e[H\e[2J");
+     #elif defined WIN32
+     //código específico para windows
+     system ("cls");
+     #else
+     printf("\e[H\e[2J");
+     #endif
+ 
+}
+
+
+
+//imprime apenas o usuario passado como parametro
+//Função está funcionando corretamente, porém cabe-se a utilização da mesma apenas para testes
+void imprimirUm(user *ptrUser){
 	printf("|Nome: %s",ptrUser->Nome);
 	printf("\n|Numero: %s",ptrUser->Num); 
 	
 }
+
+//Essa função irá imprimir todos os usuários disponíveis na agenda
 void imprimirTodos(){
-	
 	printf("\n|====================[Lista De Contatos]==================|");
-
     user *ptrAtual;
-	
+
+    //Nessa linha ptrAtual recebe o primeiro dos usuários
 	ptrAtual = aux;
-
 	printf("\n|---------------------------------------------------------|");
-
+	
+	//For faz dois passos diferentes , o primeiro "ptrControl->ContadorDePessoas" é uma variável de controle que faz o loop , e a segunda "ptrAtual" é o loop de posições  
 	for(ptrControl->ContadorDePessoas = 0 ; ptrControl->ContadorDePessoas < ptrControl->TotalDePessoas ; ptrControl->ContadorDePessoas++,ptrAtual++ ){
 		printf("\n|Nome: %s",ptrAtual->Nome);
 		printf("\n|Numero: %s",ptrAtual->Num); 
 		printf("\n|---------------------------------------------------------|");
 	}
-
 	printf("\n|=========================================================|\n");
 }
-void inserir(user  *ptrUser){
 
-
+//Essa função faz a inserção de um novo usuário
+void inserir(user *ptrUser){
+	imprimirTodos();
 	printf("\n|=========================[Inserir]=======================|\n");
 	
 	// ao inserir um usuario aumenta a variável de quantidade de pessoas
@@ -82,6 +105,7 @@ void inserir(user  *ptrUser){
 	ptrControl = pbuffer;
 	
 	//Faz um loop em ptrUser  , até que ptrControl->ContadorDePessoas vá de 0 , até ptrControl->TotalDePessoas-1 , ou seja , até o ultimo usuario inserido 
+	//Esse tipo de loop é reutilizado várias vezes ao decorrer do código
 	for(ptrControl->ContadorDePessoas = 0; ptrControl->ContadorDePessoas < ptrControl->TotalDePessoas-1; ptrControl->ContadorDePessoas++,ptrUser++){}
 
 	printf("|Nome:");
@@ -89,29 +113,30 @@ void inserir(user  *ptrUser){
 	printf("|Numero:");
 	scanf("%s",ptrUser->Num);
 	printf("|=========================================================|\n");
+	cls();
+	imprimirTodos();
 }
+
 void buscar (variaveis *ptrControl){
 	
+	imprimirTodos();
 	printf("\n|===================[Busca De Contatos]===================|\n");
 	
-	// acessa a primeira posicao dos usuarios
+	//Inicialização da variável booleana para o controle da busca de usuários
 	ptrControl->NaoEncontrado = true;
 
+	// acessa a primeira posicao dos usuarios
 	ptrUser = pbuffer + sizeof(variaveis);
 	
 	printf("|Qual nome deseja procurar: ");
 	scanf("%s",ptrControl->NomeDeBusca);
 
-	
 	for(ptrControl->ContadorDePessoas = 0; ptrControl->ContadorDePessoas < ptrControl->TotalDePessoas; ptrControl->ContadorDePessoas++,ptrUser++){
-
 		if((strcmp(ptrUser->Nome,ptrControl->NomeDeBusca))==0){
-		
 			printf("|---------------------------------------------------------|\n");
 			printf("|Usuario encontrado\n|Numero: %s",ptrUser->Num);
 			printf("\n|---------------------------------------------------------|");
 			ptrControl->NaoEncontrado = false;
-		
 			break;
 		}
 	}
@@ -122,6 +147,7 @@ void buscar (variaveis *ptrControl){
 	
 	printf("\n|=========================================================|\n");
 }
+
 void excluir(variaveis *ptrControl)
 {
 
@@ -135,9 +161,11 @@ void excluir(variaveis *ptrControl)
 	
 	if(ptrControl->TotalDePessoas > 1 )
 	{
-	
+		imprimirTodos();
 		printf("|Qual nome deseja excluir: ");
 		scanf("%s",ptrControl->NomeDeExclusao);
+
+
 
 		for(ptrControl->ContadorDePessoas = 0; ptrControl->ContadorDePessoas < ptrControl->TotalDePessoas; ptrControl->ContadorDePessoas++,ptrUser++)
 		{
@@ -169,49 +197,44 @@ void excluir(variaveis *ptrControl)
 	}
 
 }
-void cls()
-{
-     //Código para limpar a tela , irá manter a tela sempre limpa, diminuindo a poluição visual e facilitando a utilização do usuário
-
-     //testa se o sistema operacional está definido como LINUX ou WINDOWS
-     //código especifico para linux
-     #ifdef LINUX
-     printf("\e[H\e[2J");
-     #elif defined WIN32
-     //código específico para windows
-     system ("cls");
-     #else
-     printf("\e[H\e[2J");
-     #endif
- 
-}
+//Essa função faz a troca das informações dos usuários, ela é bastante utilizada nas funções de ordenação, com isso criei uma função genérica, para re-uso do código 
 void troca(user *user1, user *user2){
 
 	user auxiliar = *user1;
 	*user1 = *user2;
 	*user2 = auxiliar;
 }
+
+//Essa Função auxilia na implementação do QuickSort, na qual é necessário "particionar" o vetor de informações , para encontrar o pivot 
+//no caso dessa função , ela retorna a posição do pivot, e não o pivot propriamente dito
 int particionar (user *ptrUser , int low, int high )
 {
    	ptrControl->j = high;
 	userPivot = &ptrUser[ptrControl->j];  
- 
     ptrControl->i = low - 1;
-
-    for (ptrControl->j = low; ptrControl->j <= high - 1; ptrControl->j++)
+	for (ptrControl->j = low; ptrControl->j <= high - 1; ptrControl->j++)
     {
-
-        if ((strcmp(ptrUser[ptrControl->j].Nome , userPivot->Nome))<0)
+	    if ((strcmp(ptrUser[ptrControl->j].Nome , userPivot->Nome))<0)
         {
             ptrControl->i++;
 
 			troca(&ptrUser[ptrControl->i],&ptrUser[ptrControl->j]);	
 		}
     }
-
 	troca(&ptrUser[ptrControl->i+1],&ptrUser[high]);	
-		
-    return (ptrControl->i + 1);
+	return (ptrControl->i + 1);
+}
+
+//Essa Função faz o teste de ordenação, para confirmar que de fato após o uso das funções, as informações estão realmente ordenadas
+//Faço o uso dessa função apenas no Merge Sort 
+bool TestaOrdenacao(){
+	for(ptrControl->i = 0; ptrControl->i < ptrControl->TotalDePessoas - 1 ; ptrControl->i++)
+	{
+		if((strcmp(ptrUser[ptrControl->i].Nome,ptrUser[ptrControl->i+1].Nome))>0){
+			return  false;
+		}			
+	}
+	return  true;
 }
 
 
@@ -219,99 +242,135 @@ int particionar (user *ptrUser , int low, int high )
 void bubblesort (variaveis *PtrControl){
 	ptrControl = pbuffer ;
 	ptrUser = pbuffer + sizeof(variaveis);
-
 	for(ptrControl->i = 0; ptrControl->i < ptrControl->TotalDePessoas - 1 ; ptrControl->i++)
 	{
-
 		for (ptrControl->j = ptrControl->i+1 ; ptrControl->j <  ptrControl->TotalDePessoas ; ptrControl->j++)
 		{
-	
 			if((strcmp(ptrUser[ptrControl->i].Nome,ptrUser[ptrControl->j].Nome))>0)
 			{
 				troca(&ptrUser[ptrControl->i],&ptrUser[ptrControl->j]);
 			}
-
 		}
-		
 	}
 }
-void SelectionSort(variaveis *ptrControl){
 
+void SelectionSort(variaveis *ptrControl){
 	ptrControl = pbuffer ;
 	ptrUser = pbuffer + sizeof(variaveis);
-
 	for(ptrControl->i = 0; ptrControl->i < ptrControl->TotalDePessoas - 1 ; ptrControl->i++)
 	{
-
 		strcpy(ptrControl->minimo , ptrUser[ptrControl->i].Nome);
 		strcpy(ptrControl->temporario2 , ptrUser[ptrControl->i].Num);
-
-
 		for (ptrControl->j = ptrControl->i+1 ; ptrControl->j <  ptrControl->TotalDePessoas ; ptrControl->j++)
 		{
-
 			if((strcmp(ptrUser[ptrControl->j].Nome,ptrControl->minimo))<0)
 			{
 				strcpy(ptrControl->minimo,ptrUser[ptrControl->j].Nome);
 				strcpy(ptrControl->temporario2,ptrUser[ptrControl->j].Num);
-		
 				ptrControl->minimo_id = ptrControl->j;
-
 			}
-		
 		}
-
 		troca(&ptrUser[ptrControl->i],&ptrUser[ptrControl->minimo_id]);
-
 	}
 }
 
 void InsertionSort(variaveis *ptrControl){
-	
 	ptrControl = pbuffer ;
 	ptrUser = pbuffer + sizeof(variaveis);
-
 	for (ptrControl->i = 1; ptrControl->i < ptrControl->TotalDePessoas ; ptrControl->i++)
 	{
-
 		strcpy(ptrControl->temporario,ptrUser[ptrControl->i].Nome);
 		strcpy(ptrControl->temporario2,ptrUser[ptrControl->i].Num);
-
 		for(ptrControl->j = ptrControl->i - 1 ; ptrControl->j >= 0 ; ptrControl->j--)
 		{
-
 			if((strcmp(ptrControl->temporario,ptrUser[ptrControl->j].Nome))>=0){
 				break;
 			}
-
-			//strcpy(ptrUser[ptrControl->j+1].Nome,ptrUser[ptrControl->j].Nome);
 			troca(&ptrUser[ptrControl->j+1],&ptrUser[ptrControl->j]);
-
-
 		}
-
 		strcpy(ptrUser[ptrControl->j+1].Nome , ptrControl->temporario);
 		strcpy(ptrUser[ptrControl->j+1].Num , ptrControl->temporario2);
 	}
-
 }
 
 void QuickSort (user *ptrUser ,int low , int high){
-	
 	if(low < high){
 		ptrControl->pivot_id = particionar(ptrUser,low,high);
-
 		QuickSort(ptrUser , low , ptrControl->pivot_id - 1);
 		QuickSort(ptrUser , ptrControl->pivot_id + 1 , high);
 	}
-
 }
+
+//Essa função é a inicialização da função QuickSort , eu a utilizo para evitar conflitos de tipo na recursividade do algoritimo
 void QuickSortMain(void *pbuffer){
 	ptrControl = pbuffer;
 	ptrUser = pbuffer + sizeof(variaveis);
 	QuickSort(ptrUser,0,ptrControl->TotalDePessoas-1);
 }
 
+void merge(user *ptrUser , int left , int medium , int right){
+    ptrControl->n1 = medium - left + 1 ;
+    ptrControl->n2 = right - medium;
+    ptrUserL = (user*) malloc(ptrControl->n1 * sizeof(user));
+    ptrUserR = (user*) malloc(ptrControl->n2 * sizeof(user));
+    for (ptrControl->i = 0; ptrControl->i < ptrControl->n1; ptrControl->i++)
+        ptrUserL[ptrControl->i] = ptrUser[left+ ptrControl->i]; 
+
+    for (ptrControl->j = 0; ptrControl->j < ptrControl->n2; ptrControl->j++)
+        ptrUserR[ptrControl->j] = ptrUser[medium + 1 + ptrControl->j];
+
+    ptrControl->i = 0 ;
+    ptrControl->j = 0 ;
+    ptrControl->k = left ;
+    while (ptrControl->i < ptrControl->n1 && ptrControl->j < ptrControl->n2) 
+    { 
+        if((strcmp(ptrUserL[ptrControl->i].Nome,ptrUserR[ptrControl->j].Nome))<0)
+        { 
+            strcpy(ptrUser[ptrControl->k].Nome , ptrUserL[ptrControl->i].Nome);
+            strcpy(ptrUser[ptrControl->k].Num , ptrUserL[ptrControl->i].Num);
+            ptrControl->i++; 
+
+        } 
+        else
+        { 
+            strcpy(ptrUser[ptrControl->k].Nome , ptrUserR[ptrControl->j].Nome);
+            strcpy(ptrUser[ptrControl->k].Num , ptrUserR[ptrControl->j].Num);
+            ptrControl->j++; 
+        } 
+        ptrControl->k++; 
+    } 
+    while (ptrControl->i < ptrControl->n1) 
+    { 
+        strcpy(ptrUser[ptrControl->k].Nome , ptrUserL[ptrControl->i].Nome);
+        strcpy(ptrUser[ptrControl->k].Num , ptrUserL[ptrControl->i].Num);
+        ptrControl->i++; 
+        ptrControl->k++; 
+    } 
+    while (ptrControl->j < ptrControl->n2) 
+    { 
+       strcpy(ptrUser[ptrControl->k].Nome , ptrUserR[ptrControl->j].Nome);
+       strcpy(ptrUser[ptrControl->k].Num , ptrUserR[ptrControl->j].Num);
+       ptrControl->j++; 
+       ptrControl->k++; 
+    } 
+    
+}
+
+void MergeSort(user *ptrUser , int left , int right){
+    if(left < right){
+        ptrControl->med = left + (right-left)/2;
+        MergeSort(ptrUser , left , ptrControl->med);
+        MergeSort(ptrUser , ptrControl->med + 1 , right);
+        merge(ptrUser , left , ptrControl->med , right);
+    }
+}
+
+//Assim como o QuickSort, utilizo aqui a função mergeMain , para inicialização do algoritimo de ordenação , para evitar conflito de tipos na recursividade
+void mergeMain(void *pbuffer){
+    ptrControl = pbuffer;
+    ptrUser = pbuffer + sizeof(variaveis);
+    MergeSort(ptrUser , 0 , ptrControl->TotalDePessoas -1 );
+}
 
 int main(int argc, char const *argv[])
 {
@@ -343,7 +402,8 @@ int main(int argc, char const *argv[])
 		printf("| 6-SelectionSort\n");
 		printf("| 7-InsertionSort\n");
 		printf("| 8-QuickSort\n");
-		printf("| 9-Sair\n");
+		printf("| 9-MergeSort\n");
+		printf("| 10-Sair\n");
 		printf("|=========================================================|\n");
 		
 		printf("|Selecione uma das opcoes: ");
@@ -353,91 +413,113 @@ int main(int argc, char const *argv[])
 		switch(ptrControl->OpcaoDoMenu){
 			
 			case 1:
-				
 				cls();
 				inserir(ptrUser);
 				ptrUser = pbuffer;
-				getchar();	
-
+				getchar();
 				break;
 			
-			case 2:
-				
+			case 2:			
 				cls();
 				imprimirTodos();
 				break;
 			
 			case 3:
-
 				cls();
 				buscar(ptrControl);
 				break;
 
 			case 4:
-
 				cls();
 				excluir(ptrControl);
+				cls();
+				imprimirTodos();
+				
 				break;
 
 			case 5:
-				
 				cls();
 				if(ptrControl->ContadorDePessoas > 0 ){
 					bubblesort(ptrControl);
-					printf("|=========================================================|\n");
-					printf("| Agenda Ordenada!");	
+					cls();
+					imprimirTodos();
 
 				}else{
-					printf("| Quantidade de usuarios insuficiente ");
+					cls();
+					imprimirTodos();
+					printf("| Nao foi possivel ordenar: quantidade de usuarios insuficiente ");
 				}
 
 				break;
 
 			case 6:
-
 				cls();
 				if(ptrControl->ContadorDePessoas > 0 ){
-					SelectionSort(ptrControl);
-					printf("|=========================================================|\n");
-					printf("| Agenda Ordenada!");
-					
-				}else{
-					printf("| Quantidade de usuarios insuficiente ");
-				}
+					ptrControl->ordenado = false;
+					while(!ptrControl->ordenado){
+						SelectionSort(ptrControl);
+						ptrControl->ordenado = TestaOrdenacao();
+					}
+					cls();
+					imprimirTodos();
 				
+				}else{
+					cls();
+					imprimirTodos();
+					printf("| Nao foi possivel ordenar: quantidade de usuarios insuficiente ");
+								}
 				break;
 	
 			case 7:
 				cls();
 				if(ptrControl->ContadorDePessoas > 0) {
 					InsertionSort(ptrControl);
-					printf("|=========================================================|\n");
-					printf("| Agenda Ordenada!");
+					cls();
+					imprimirTodos();
 				}else{
-					printf("| Quantidade de usuarios insuficiente ");
-				}
+					cls();
+					imprimirTodos();
+					printf("| Nao foi possivel ordenar: quantidade de usuarios insuficiente ");
 				
-				break;
-
+				}break;
 
 			case 8:
-
 				cls();
 				if(ptrControl->ContadorDePessoas > 0) {
 					QuickSortMain(pbuffer);
-					printf("|=========================================================|\n");
-					printf("| Agenda Ordenada!");
+					cls();
+					imprimirTodos();
 				}else{
-					printf("| Quantidade de usuarios insuficiente ");
-				}
-				
+					cls();
+					imprimirTodos();
+					printf("| Nao foi possivel ordenar: quantidade de usuarios insuficiente ");
+				}				
 				break;
 							
 			case 9:
 				cls();
+				if(ptrControl->ContadorDePessoas > 0) {
+					ptrControl->ordenado = false;
+					while(!ptrControl->ordenado){
+						mergeMain(pbuffer);
+						ptrControl->ordenado = TestaOrdenacao();
+					}
+					cls();
+					imprimirTodos();
+				}else{
+					cls();
+					imprimirTodos();
+					printf("| Nao foi possivel ordenar: quantidade de usuarios insuficiente ");
+				}
+				break;
+
+			case 10:
+				cls();
 				printf("|====================== Ate logo! :D =====================|\n");
 				free(pbuffer);
-
+				free(userPivot);
+				free(ptrUserR);
+				free(ptrUserL);
 				return 1;
 				break;
 			
