@@ -1,3 +1,98 @@
+/* 
+##Funções para controle da estrutura pilha## 
+
+void *topo,*base;
+user *ptrUser;
+variaveis *ptrControl;
+void status(){
+	printf("\n End Topo %u\n End Base %u\n End ptrUSer %u\n End pbuffer %u\n End PtrControl %u\n Qnt Pessoas %d\n \n",topo,base,ptrUser,pbuffer,ptrControl,ptrControl->TotalDePessoas);
+}
+
+void reset(){
+	ptrControl = aux = pbuffer;
+	ptrUser = pbuffer+sizeof(variaveis);
+	topo = base = ptrUser;
+	ptrControl->TotalDePessoas = 0 ;
+}
+
+
+bool empty(){
+	if(topo == base){
+		return true;
+	}else{
+		return false;
+	}
+}
+
+void display(user *ptrAtual){
+    
+	printf("\n|====================[Lista De Contatos]==================|");
+	printf("\n|---------------------------------------------------------|");
+	printf("\n|Nome: %s",ptrAtual->Nome);
+	printf("\n|Numero: %s",ptrAtual->Num);
+	printf("\n|---------------------------------------------------------|");
+	printf("\n|=========================================================|\n");
+}
+
+void popDisplay(user *ptrAtual){
+    
+	printf("\n|=======================[Pop Display]=====================|");
+	printf("\n|---------------------------------------------------------|");
+	printf("\n|Nome: %s",ptrAtual->Nome);
+	printf("\n|Numero: %s",ptrAtual->Num);
+	printf("\n|---------------------------------------------------------|");
+	printf("\n|=========================================================|\n");
+}
+
+void push(){
+
+	ptrControl->TotalDePessoas++;
+	pbuffer = realloc(pbuffer,(sizeof(variaveis) + 
+	ptrControl->TotalDePessoas * sizeof(user)));
+
+	ptrUser = pbuffer+sizeof(variaveis);
+	aux = ptrUser;
+	ptrControl = pbuffer;
+
+	for(ptrControl->ContadorDePessoas = 0; ptrControl->ContadorDePessoas < ptrControl->TotalDePessoas-1;
+	ptrControl->ContadorDePessoas++,ptrUser++){}
+
+	printf("|Nome:");
+	scanf("%s",ptrUser->Nome);
+	printf("|Numero:");
+	scanf("%s",ptrUser->Num);
+	
+	base = aux;
+	topo = ptrUser; 
+
+}
+
+
+user* pop(){
+
+
+	popDisplay(topo);
+
+	ptrControl->TotalDePessoas--;
+
+	pbuffer = realloc(pbuffer,(sizeof(variaveis) + 
+	ptrControl->TotalDePessoas * sizeof(user)));
+
+	ptrUser = pbuffer+sizeof(variaveis);
+	aux = ptrUser;
+	ptrControl = pbuffer;
+
+
+	for(ptrControl->ContadorDePessoas = 0;
+	ptrControl->ContadorDePessoas < ptrControl->TotalDePessoas-1;
+	ptrControl->ContadorDePessoas++,ptrUser++){}
+
+	topo = ptrUser;
+	
+
+}
+
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -264,7 +359,138 @@ void SelectionSort(variaveis *ptrControl){
 		strcpy(ptrControl->temporario2 , ptrUser[ptrControl->i].Num);
 		for (ptrControl->j = ptrControl->i+1 ; ptrControl->j <  ptrControl->TotalDePessoas ; ptrControl->j++)
 		{
-			if((strcmp(ptrUser[ptrControl->j].Nome,ptrControl->minimo))<0)
+			if((strcmp(ptrUser[ptrControl->j].Nome,ptrControl->minimo))<0)#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
+#include <string.h>
+#include <stdbool.h>
+
+
+typedef struct control{
+	int ContadorDePessoas,ContadorDeExclusao,TotalDePessoas,OpcaoDoMenu,i,j,k,pivot_id;
+	char NomeDeBusca[20],NomeDeExclusao[20],minimo[20],temporario[20],temporario2[20];
+	bool NaoEncontrado,ordenado;
+	int minimo_id,i_aux,n1,n2,med;
+	
+
+}variaveis;
+typedef struct user{
+	char Nome[20],Num[10];
+}user;
+
+void *pbuffer,*aux,*topo,*base;
+user *ptrUser;
+variaveis *ptrControl;
+
+
+
+void status(){
+	printf("\n End Topo %u\n End Base %u\n End ptrUSer %u\n End pbuffer %u\n End PtrControl %u\n Qnt Pessoas %d\n \n",topo,base,ptrUser,pbuffer,ptrControl,ptrControl->TotalDePessoas);
+}
+
+void reset(){
+	ptrControl = aux = pbuffer;
+	ptrUser = pbuffer+sizeof(variaveis);
+	topo = base = ptrUser;
+	ptrControl->TotalDePessoas = 0 ;
+}
+
+
+bool empty(){
+	if(topo == base){
+		return true;
+	}else{
+		return false;
+	}
+}
+
+void display(user *ptrAtual){
+    
+	printf("\n|====================[Lista De Contatos]==================|");
+	printf("\n|---------------------------------------------------------|");
+	printf("\n|Nome: %s",ptrAtual->Nome);
+	printf("\n|Numero: %s",ptrAtual->Num);
+	printf("\n|---------------------------------------------------------|");
+	printf("\n|=========================================================|\n");
+}
+
+void popDisplay(user *ptrAtual){
+    
+	printf("\n|=======================[Pop Display]=====================|");
+	printf("\n|---------------------------------------------------------|");
+	printf("\n|Nome: %s",ptrAtual->Nome);
+	printf("\n|Numero: %s",ptrAtual->Num);
+	printf("\n|---------------------------------------------------------|");
+	printf("\n|=========================================================|\n");
+}
+
+void push(){
+
+	ptrControl->TotalDePessoas++;
+	pbuffer = realloc(pbuffer,(sizeof(variaveis) + 
+	ptrControl->TotalDePessoas * sizeof(user)));
+
+	ptrUser = pbuffer+sizeof(variaveis);
+	aux = ptrUser;
+	ptrControl = pbuffer;
+
+	for(ptrControl->ContadorDePessoas = 0; ptrControl->ContadorDePessoas < ptrControl->TotalDePessoas-1;
+	ptrControl->ContadorDePessoas++,ptrUser++){}
+
+	printf("|Nome:");
+	scanf("%s",ptrUser->Nome);
+	printf("|Numero:");
+	scanf("%s",ptrUser->Num);
+	
+	base = aux;
+	topo = ptrUser; 
+
+}
+
+
+user* pop(){
+
+
+	popDisplay(topo);
+
+	ptrControl->TotalDePessoas--;
+
+	pbuffer = realloc(pbuffer,(sizeof(variaveis) + 
+	ptrControl->TotalDePessoas * sizeof(user)));
+
+	ptrUser = pbuffer+sizeof(variaveis);
+	aux = ptrUser;
+	ptrControl = pbuffer;
+
+
+	for(ptrControl->ContadorDePessoas = 0;
+	ptrControl->ContadorDePessoas < ptrControl->TotalDePessoas-1;
+	ptrControl->ContadorDePessoas++,ptrUser++){}
+
+	topo = ptrUser;
+	
+
+}
+
+
+
+
+int main(int argc, char const *argv[])
+{
+	
+	pbuffer = malloc(sizeof(variaveis)+sizeof(user));
+	
+	reset();
+	push();
+	push();
+	pop();
+	pop();
+	status();
+
+	return 0;
+}
+
 			{
 				strcpy(ptrControl->minimo,ptrUser[ptrControl->j].Nome);
 				strcpy(ptrControl->temporario2,ptrUser[ptrControl->j].Num);
