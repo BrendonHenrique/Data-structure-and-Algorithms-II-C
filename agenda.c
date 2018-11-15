@@ -1,98 +1,3 @@
-/* 
-##Funções para controle da estrutura pilha## 
-
-void *topo,*base;
-user *ptrUser;
-variaveis *ptrControl;
-void status(){
-	printf("\n End Topo %u\n End Base %u\n End ptrUSer %u\n End pbuffer %u\n End PtrControl %u\n Qnt Pessoas %d\n \n",topo,base,ptrUser,pbuffer,ptrControl,ptrControl->TotalDePessoas);
-}
-
-void reset(){
-	ptrControl = aux = pbuffer;
-	ptrUser = pbuffer+sizeof(variaveis);
-	topo = base = ptrUser;
-	ptrControl->TotalDePessoas = 0 ;
-}
-
-
-bool empty(){
-	if(topo == base){
-		return true;
-	}else{
-		return false;
-	}
-}
-
-void display(user *ptrAtual){
-    
-	printf("\n|====================[Lista De Contatos]==================|");
-	printf("\n|---------------------------------------------------------|");
-	printf("\n|Nome: %s",ptrAtual->Nome);
-	printf("\n|Numero: %s",ptrAtual->Num);
-	printf("\n|---------------------------------------------------------|");
-	printf("\n|=========================================================|\n");
-}
-
-void popDisplay(user *ptrAtual){
-    
-	printf("\n|=======================[Pop Display]=====================|");
-	printf("\n|---------------------------------------------------------|");
-	printf("\n|Nome: %s",ptrAtual->Nome);
-	printf("\n|Numero: %s",ptrAtual->Num);
-	printf("\n|---------------------------------------------------------|");
-	printf("\n|=========================================================|\n");
-}
-
-void push(){
-
-	ptrControl->TotalDePessoas++;
-	pbuffer = realloc(pbuffer,(sizeof(variaveis) + 
-	ptrControl->TotalDePessoas * sizeof(user)));
-
-	ptrUser = pbuffer+sizeof(variaveis);
-	aux = ptrUser;
-	ptrControl = pbuffer;
-
-	for(ptrControl->ContadorDePessoas = 0; ptrControl->ContadorDePessoas < ptrControl->TotalDePessoas-1;
-	ptrControl->ContadorDePessoas++,ptrUser++){}
-
-	printf("|Nome:");
-	scanf("%s",ptrUser->Nome);
-	printf("|Numero:");
-	scanf("%s",ptrUser->Num);
-	
-	base = aux;
-	topo = ptrUser; 
-
-}
-
-
-user* pop(){
-
-
-	popDisplay(topo);
-
-	ptrControl->TotalDePessoas--;
-
-	pbuffer = realloc(pbuffer,(sizeof(variaveis) + 
-	ptrControl->TotalDePessoas * sizeof(user)));
-
-	ptrUser = pbuffer+sizeof(variaveis);
-	aux = ptrUser;
-	ptrControl = pbuffer;
-
-
-	for(ptrControl->ContadorDePessoas = 0;
-	ptrControl->ContadorDePessoas < ptrControl->TotalDePessoas-1;
-	ptrControl->ContadorDePessoas++,ptrUser++){}
-
-	topo = ptrUser;
-	
-
-}
-
-*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -103,7 +8,7 @@ typedef struct control{
 	int ContadorDePessoas;
 	int ContadorDeExclusao;
 	int TotalDePessoas;
-	int OpcaoDoMenu;
+	int OpcaoDoMenu,OpcaoDoMenu2;
 	int i,j,k,pivot_id;
 	char NomeDeBusca[20];
 	char NomeDeExclusao[20];
@@ -113,29 +18,22 @@ typedef struct control{
 	int i_aux;
 	int n1,n2,med;
 	bool ordenado;
+	int TipoStruct;
 
 }variaveis;
-
 typedef struct user{
 	char Nome[20];
 	char Num[10];
 }user;
 
 //Variaveis globais
-user *ptrUser;//ptrUser é uma variável utilizada para guardar todas as informações dos usuários
-variaveis *ptrControl;//ptrControl Guarda todas as variaveis utilizadas no controle dos usuários
-user *aux;//aux é a variável utilizada para guardar a posição do primeiro usuário
-void *pbuffer;//pbuffer é a variável a qual todos os usuários estão guardados
-user *userPivot;//userPivot foi criada para auxiliar a execução do QuickSort
-user *ptrUserL;//ptrUserL  foi criado para auxiliar a execução do MergeSort
-user *ptrUserR;//ptrUserR  foi criado para auxiliar a execução do MergeSort
+variaveis *ptrControl;
+user *ptrUser,*aux,*userPivot,*ptrUserL,*ptrUserR;
+void *pbuffer,*topo,*base;
 
 
-/* Funções de controle */
-
-     //Código para limpar a tela , irá manter a tela sempre limpa, diminuindo a poluição visual e facilitando a utilização do usuário
-void cls()
-{
+//Controlhe agenda array//
+void cls(){
 
      //testa se o sistema operacional está definido como LINUX ou WINDOWS
      //código especifico para linux
@@ -151,35 +49,23 @@ void cls()
 
 }
 
-
-
-//imprime apenas o usuario passado como parametro
-//Função está funcionando corretamente, porém cabe-se a utilização da mesma apenas para testes
-void imprimirUm(user *ptrUser){
-	printf("|Nome: %s",ptrUser->Nome);
-	printf("\n|Numero: %s",ptrUser->Num);
-
-}
-
-//Essa função irá imprimir todos os usuários disponíveis na agenda
+//Imprimir Todos para tipo Stack foi implementado de forma genérica
+//Deveria copiar para outro vetor , dar pop até o fim , e depois recoloca-lo MAS futuramente será implementada
 void imprimirTodos(){
-	printf("\n|====================[Lista De Contatos]==================|");
-    user *ptrAtual;
+	user *ptrAtual;
+    ptrAtual = aux;
 
-    //Nessa linha ptrAtual recebe o primeiro dos usuários
-	ptrAtual = aux;
-	printf("\n|---------------------------------------------------------|");
-
-	//For faz dois passos diferentes , o primeiro "ptrControl->ContadorDePessoas" é uma variável de controle que faz o loop , e a segunda "ptrAtual" é o loop de posições
-	for(ptrControl->ContadorDePessoas = 0 ; ptrControl->ContadorDePessoas < ptrControl->TotalDePessoas ; ptrControl->ContadorDePessoas++,ptrAtual++ ){
-		printf("\n|Nome: %s",ptrAtual->Nome);
-		printf("\n|Numero: %s",ptrAtual->Num);
-		printf("\n|---------------------------------------------------------|");
-	}
-	printf("\n|=========================================================|\n");
+	printf("\n|=====================[Contact List]======================|");
+    printf("\n|---------------------------------------------------------|");
+    for(ptrControl->ContadorDePessoas = 0 ;
+    ptrControl->ContadorDePessoas < ptrControl->TotalDePessoas ;
+    ptrControl->ContadorDePessoas++,ptrAtual++ ){
+        printf("\n|Nome: %s",ptrAtual->Nome);
+        printf("\n|Numero: %s",ptrAtual->Num);
+        printf("\n|---------------------------------------------------------|");
+    }
+    printf("\n|=========================================================|\n");
 }
-
-//Essa função faz a inserção de um novo usuário
 void inserir(user *ptrUser){
 	imprimirTodos();
 	printf("\n|=========================[Inserir]=======================|\n");
@@ -212,7 +98,6 @@ void inserir(user *ptrUser){
 	cls();
 	imprimirTodos();
 }
-
 void buscar (variaveis *ptrControl){
 
 	imprimirTodos();
@@ -243,9 +128,7 @@ void buscar (variaveis *ptrControl){
 
 	printf("\n|=========================================================|\n");
 }
-
-void excluir(variaveis *ptrControl)
-{
+void excluir(variaveis *ptrControl){
 
 	ptrUser = pbuffer + sizeof(variaveis);
 
@@ -293,18 +176,13 @@ void excluir(variaveis *ptrControl)
 	}
 
 }
-//Essa função faz a troca das informações dos usuários, ela é bastante utilizada nas funções de ordenação, com isso criei uma função genérica, para re-uso do código
 void troca(user *user1, user *user2){
 
 	user auxiliar = *user1;
 	*user1 = *user2;
 	*user2 = auxiliar;
 }
-
-//Essa Função auxilia na implementação do QuickSort, na qual é necessário "particionar" o vetor de informações , para encontrar o pivot
-//no caso dessa função , ela retorna a posição do pivot, e não o pivot propriamente dito
-int particionar (user *ptrUser , int low, int high )
-{
+int  particionar (user *ptrUser , int low, int high ){
    	ptrControl->j = high;
 	userPivot = &ptrUser[ptrControl->j];
     ptrControl->i = low - 1;
@@ -320,24 +198,111 @@ int particionar (user *ptrUser , int low, int high )
 	troca(&ptrUser[ptrControl->i+1],&ptrUser[high]);
 	return (ptrControl->i + 1);
 }
-
-//Essa Função faz o teste de ordenação, para confirmar que de fato após o uso das funções, as informações estão realmente ordenadas
-//Faço o uso dessa função apenas no Merge Sort
 bool TestaOrdenacao(){
-	for(ptrControl->i = 0; ptrControl->i < ptrControl->TotalDePessoas - 1 ; ptrControl->i++)
+
+	for(ptrControl->j = 0; ptrControl->j < ptrControl->TotalDePessoas - 1 ; ptrControl->j++)
 	{
-		if((strcmp(ptrUser[ptrControl->i].Nome,ptrUser[ptrControl->i+1].Nome))>0){
+		if((strcmp(ptrUser[ptrControl->j].Nome,ptrUser[ptrControl->j+1].Nome))>0){
 			return  false;
 		}
 	}
 	return  true;
 }
 
+//Controlhe agenda Stack//
+void reset(){
+	ptrControl = pbuffer;
+	aux = pbuffer;
+	ptrUser = pbuffer+sizeof(variaveis);
+	topo = ptrUser;
+	base = ptrUser;
+	ptrControl->TotalDePessoas = 0 ;
+    printf("\n|---------------------------------------------------------|");
+    printf("\n|======================[Reseted]==========================|");
+    printf("\n|---------------------------------------------------------|");
 
-/*Funcoes de ordenação*/
-void bubblesort (variaveis *PtrControl){
-	ptrControl = pbuffer ;
+}
+bool empty(){
+	if(ptrControl->TotalDePessoas == 0){
+		return true;
+	}else if(ptrControl->TotalDePessoas != 0){
+		return false;
+	}
+}
+void popDisplay(user *ptrAtual){
+	printf("\n|Nome: %s",ptrAtual->Nome);
+	printf("\n|Numero: %s",ptrAtual->Num);
+}
+void Display(){
+    ptrUser = topo;
+    user *ptrAux;
+    ptrAux = ptrUser ;
+
+    if(!empty()){
+        printf("\n|=====================[Contact List]======================|");
+        printf("\n|---------------------------------------------------------|");
+        for(ptrControl->ContadorDePessoas = 0;
+         ptrControl->ContadorDePessoas < ptrControl->TotalDePessoas;
+         ptrControl->ContadorDePessoas++,ptrAux--){
+             popDisplay(ptrAux);
+             printf("\n|---------------------------------------------------------|");
+        }
+    printf("\n|=========================================================|\n");
+    }else{
+        printf("\n|=======================[Pop Display]=====================|");
+        printf("\n|---------------------------------------------------------|");
+        printf("\n|Stack is empty");
+        printf("\n|---------------------------------------------------------|");
+        printf("\n|=========================================================|\n");
+    }
+}
+void push(){
+
+	ptrControl->TotalDePessoas++;
+
+	pbuffer = realloc(pbuffer,(sizeof(variaveis) +	ptrControl->TotalDePessoas * sizeof(user)));
+
+	ptrUser = pbuffer+sizeof(variaveis);
+	aux = ptrUser;
+	ptrControl = pbuffer;
+
+
+	for(ptrControl->ContadorDePessoas = 0; ptrControl->ContadorDePessoas < ptrControl->TotalDePessoas-1;
+	ptrControl->ContadorDePessoas++,ptrUser++){}
+
+	printf("|Nome:");
+	scanf("%s",ptrUser->Nome);
+	printf("|Numero:");
+	scanf("%s",ptrUser->Num);
+
+	base = aux;
+	topo = ptrUser;
+
+}
+user* pop(){
+    if(!empty()){
+        ptrControl->TotalDePessoas--;
+        pbuffer = realloc(pbuffer,(sizeof(variaveis) +	ptrControl->TotalDePessoas * sizeof(user)));
+        ptrUser = pbuffer+sizeof(variaveis);
+        aux = ptrUser;
+        ptrControl = pbuffer;
+        for(ptrControl->ContadorDePessoas = 0;
+        ptrControl->ContadorDePessoas < ptrControl->TotalDePessoas-1;
+        ptrControl->ContadorDePessoas++,ptrUser++){}
+        topo = ptrUser;
+    }else{
+        printf("\n|=======================[Pop Display]=====================|");
+        printf("\n|---------------------------------------------------------|");
+        printf("\n|Stack is empty");
+        printf("\n|---------------------------------------------------------|");
+        printf("\n|=========================================================|\n");
+    }
+}
+
+//Sorts
+void bubblesort (){
 	ptrUser = pbuffer + sizeof(variaveis);
+	ptrControl=pbuffer;
 	for(ptrControl->i = 0; ptrControl->i < ptrControl->TotalDePessoas - 1 ; ptrControl->i++)
 	{
 		for (ptrControl->j = ptrControl->i+1 ; ptrControl->j <  ptrControl->TotalDePessoas ; ptrControl->j++)
@@ -348,150 +313,24 @@ void bubblesort (variaveis *PtrControl){
 			}
 		}
 	}
-}
 
-void SelectionSort(variaveis *ptrControl){
-	ptrControl = pbuffer ;
-	ptrUser = pbuffer + sizeof(variaveis);
-	for(ptrControl->i = 0; ptrControl->i < ptrControl->TotalDePessoas - 1 ; ptrControl->i++)
+	if(ptrControl->TipoStruct == 2 ){
+	    ptrUser = topo;
+	}
+}
+void SelectionSort(){
+
+    ptrUser = pbuffer + sizeof(variaveis);
+    ptrControl = pbuffer;
+
+    for(ptrControl->i = 0; ptrControl->i < ptrControl->TotalDePessoas - 1 ; ptrControl->i++)
 	{
 		strcpy(ptrControl->minimo , ptrUser[ptrControl->i].Nome);
 		strcpy(ptrControl->temporario2 , ptrUser[ptrControl->i].Num);
 		for (ptrControl->j = ptrControl->i+1 ; ptrControl->j <  ptrControl->TotalDePessoas ; ptrControl->j++)
 		{
-			if((strcmp(ptrUser[ptrControl->j].Nome,ptrControl->minimo))<0)#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <math.h>
-#include <string.h>
-#include <stdbool.h>
-
-
-typedef struct control{
-	int ContadorDePessoas,ContadorDeExclusao,TotalDePessoas,OpcaoDoMenu,i,j,k,pivot_id;
-	char NomeDeBusca[20],NomeDeExclusao[20],minimo[20],temporario[20],temporario2[20];
-	bool NaoEncontrado,ordenado;
-	int minimo_id,i_aux,n1,n2,med;
-	
-
-}variaveis;
-typedef struct user{
-	char Nome[20],Num[10];
-}user;
-
-void *pbuffer,*aux,*topo,*base;
-user *ptrUser;
-variaveis *ptrControl;
-
-
-
-void status(){
-	printf("\n End Topo %u\n End Base %u\n End ptrUSer %u\n End pbuffer %u\n End PtrControl %u\n Qnt Pessoas %d\n \n",topo,base,ptrUser,pbuffer,ptrControl,ptrControl->TotalDePessoas);
-}
-
-void reset(){
-	ptrControl = aux = pbuffer;
-	ptrUser = pbuffer+sizeof(variaveis);
-	topo = base = ptrUser;
-	ptrControl->TotalDePessoas = 0 ;
-}
-
-
-bool empty(){
-	if(topo == base){
-		return true;
-	}else{
-		return false;
-	}
-}
-
-void display(user *ptrAtual){
-    
-	printf("\n|====================[Lista De Contatos]==================|");
-	printf("\n|---------------------------------------------------------|");
-	printf("\n|Nome: %s",ptrAtual->Nome);
-	printf("\n|Numero: %s",ptrAtual->Num);
-	printf("\n|---------------------------------------------------------|");
-	printf("\n|=========================================================|\n");
-}
-
-void popDisplay(user *ptrAtual){
-    
-	printf("\n|=======================[Pop Display]=====================|");
-	printf("\n|---------------------------------------------------------|");
-	printf("\n|Nome: %s",ptrAtual->Nome);
-	printf("\n|Numero: %s",ptrAtual->Num);
-	printf("\n|---------------------------------------------------------|");
-	printf("\n|=========================================================|\n");
-}
-
-void push(){
-
-	ptrControl->TotalDePessoas++;
-	pbuffer = realloc(pbuffer,(sizeof(variaveis) + 
-	ptrControl->TotalDePessoas * sizeof(user)));
-
-	ptrUser = pbuffer+sizeof(variaveis);
-	aux = ptrUser;
-	ptrControl = pbuffer;
-
-	for(ptrControl->ContadorDePessoas = 0; ptrControl->ContadorDePessoas < ptrControl->TotalDePessoas-1;
-	ptrControl->ContadorDePessoas++,ptrUser++){}
-
-	printf("|Nome:");
-	scanf("%s",ptrUser->Nome);
-	printf("|Numero:");
-	scanf("%s",ptrUser->Num);
-	
-	base = aux;
-	topo = ptrUser; 
-
-}
-
-
-user* pop(){
-
-
-	popDisplay(topo);
-
-	ptrControl->TotalDePessoas--;
-
-	pbuffer = realloc(pbuffer,(sizeof(variaveis) + 
-	ptrControl->TotalDePessoas * sizeof(user)));
-
-	ptrUser = pbuffer+sizeof(variaveis);
-	aux = ptrUser;
-	ptrControl = pbuffer;
-
-
-	for(ptrControl->ContadorDePessoas = 0;
-	ptrControl->ContadorDePessoas < ptrControl->TotalDePessoas-1;
-	ptrControl->ContadorDePessoas++,ptrUser++){}
-
-	topo = ptrUser;
-	
-
-}
-
-
-
-
-int main(int argc, char const *argv[])
-{
-	
-	pbuffer = malloc(sizeof(variaveis)+sizeof(user));
-	
-	reset();
-	push();
-	push();
-	pop();
-	pop();
-	status();
-
-	return 0;
-}
-
-			{
+            if((strcmp(ptrUser[ptrControl->j].Nome,ptrControl->minimo))<0)
+            {
 				strcpy(ptrControl->minimo,ptrUser[ptrControl->j].Nome);
 				strcpy(ptrControl->temporario2,ptrUser[ptrControl->j].Num);
 				ptrControl->minimo_id = ptrControl->j;
@@ -499,11 +338,14 @@ int main(int argc, char const *argv[])
 		}
 		troca(&ptrUser[ptrControl->i],&ptrUser[ptrControl->minimo_id]);
 	}
+	if(ptrControl->TipoStruct == 2 ){
+	    //ptrUser = topo;
+	}
 }
 
-void InsertionSort(variaveis *ptrControl){
-	ptrControl = pbuffer ;
+void InsertionSort(){
 	ptrUser = pbuffer + sizeof(variaveis);
+	ptrControl = pbuffer;
 	for (ptrControl->i = 1; ptrControl->i < ptrControl->TotalDePessoas ; ptrControl->i++)
 	{
 		strcpy(ptrControl->temporario,ptrUser[ptrControl->i].Nome);
@@ -518,8 +360,10 @@ void InsertionSort(variaveis *ptrControl){
 		strcpy(ptrUser[ptrControl->j+1].Nome , ptrControl->temporario);
 		strcpy(ptrUser[ptrControl->j+1].Num , ptrControl->temporario2);
 	}
+	if(ptrControl->TipoStruct == 2  ){
+	    ptrUser = topo;
+	}
 }
-
 void QuickSort (user *ptrUser ,int low , int high){
 	if(low < high){
 		ptrControl->pivot_id = particionar(ptrUser,low,high);
@@ -527,15 +371,11 @@ void QuickSort (user *ptrUser ,int low , int high){
 		QuickSort(ptrUser , ptrControl->pivot_id + 1 , high);
 	}
 }
-
-//Essa função é a inicialização da função QuickSort , eu a utilizo para evitar conflitos de tipo na recursividade do algoritimo
-void QuickSortMain(void *pbuffer){
-	ptrControl = pbuffer;
+void QuickSortMain(){
 	ptrUser = pbuffer + sizeof(variaveis);
+	ptrControl = pbuffer;
 	QuickSort(ptrUser,0,ptrControl->TotalDePessoas-1);
 }
-
-//Essa função é chamada para Dilatar o pbuffer conforme necessário para a função merge poder criar vetores
 void mergeAuxFunction(){
 
 	pbuffer = realloc(pbuffer,
@@ -554,7 +394,6 @@ void mergeAuxFunction(){
     ptrUserL = pbuffer + sizeof(variaveis) + ptrControl->TotalDePessoas * sizeof(user) ;
     ptrUserR = ptrUserL + ptrControl->n1 * sizeof(user);
 }
-
 void merge(user *ptrUser , int left , int medium , int right){
     ptrControl->n1 = medium - left + 1 ;
     ptrControl->n2 = right - medium;
@@ -603,7 +442,6 @@ void merge(user *ptrUser , int left , int medium , int right){
     }
 
 }
-
 void MergeSort(user *ptrUser , int left , int right){
     if(left < right){
         ptrControl->med = left + (right-left)/2;
@@ -612,169 +450,313 @@ void MergeSort(user *ptrUser , int left , int right){
         merge(ptrUser , left , ptrControl->med , right);
     }
 }
-
-//Assim como o QuickSort, utilizo aqui a função mergeMain , para inicialização do algoritimo de ordenação , para evitar conflito de tipos na recursividade
-void mergeMain(void *pbuffer){
+void mergeMain(){
     ptrControl = pbuffer;
     ptrUser = pbuffer + sizeof(variaveis);
     MergeSort(ptrUser , 0 , ptrControl->TotalDePessoas -1 );
 }
 
-int main(int argc, char const *argv[])
-{
+//Menus
+void menuStack(){
+    printf("\n|====================[Schedule Stack]====================|\n");
+	printf("| 1-Push\n");
+    printf("| 2-Pop\n");
+    printf("| 3-Display\n");
+    printf("| 4-Reset\n");
+    printf("| 5-BubbleSort\n");
+    printf("| 6-SelectionSort\n");
+    printf("| 7-InsertionSort\n");
+    printf("| 8-QuickSort\n");
+    printf("| 9-MergeSort\n");
+    printf("| 10-Exit\n");
+    printf("|=========================================================|\n");
+    printf("|Select a number: ");
+}
+void menuArray(){
+    printf("\n|====================[Schedule Array]=====================|\n");
+    printf("| 1-New Contact\n");
+    printf("| 2-Display Contacts\n");
+    printf("| 3-Search\n");
+    printf("| 4-Exclude\n");
+    printf("| 5-BubbleSort\n");
+    printf("| 6-SelectionSort\n");
+    printf("| 7-InsertionSort\n");
+    printf("| 8-QuickSort\n");
+    printf("| 9-MergeSort\n");
+    printf("| 10-Exit\n");
+    printf("|=========================================================|\n");
+    printf("|Select a number: ");
+}
+void menuInicial(){
+	printf("\n|=====================[Which Structure?]==================|\n");
+    printf("| 1-Array structure\n");
+    printf("| 2-Stack Structure\n");
+    printf("| 3-Exit\n");
+    printf("|=========================================================|\n");
+    printf("|Select a structure to start your schedule: ");
+    scanf("%d",&ptrControl->OpcaoDoMenu);
+    ptrControl->TipoStruct = ptrControl->OpcaoDoMenu;
+}
 
-	//aloca a primeira posição de memória de pbuffer para caber as variaveis que estão na struct variaveis
-	pbuffer = malloc(sizeof(variaveis));
+int main(){
 
-	//ptrControl aponta para a posição alocada para as variaveis
-	ptrControl = pbuffer;
+    pbuffer = malloc(sizeof(variaveis)+sizeof(user));
+    reset();
+    menuInicial();
 
-	// testa se pbuffer conseguiu alocar
-	if(pbuffer == NULL){
-		return -1;
-	}
+    if(ptrControl->TipoStruct == 1 ){
+        for(;;){
+            menuArray();
+            scanf("%d",&ptrControl->OpcaoDoMenu2);
+            switch(ptrControl->OpcaoDoMenu2){
 
-	// Inicializa contador de pessoas e total de pessoas
-	ptrControl->ContadorDePessoas = 0 ;
-	ptrControl->TotalDePessoas =  0 ;
+            case 1:
+                cls();
+                inserir(ptrUser);
+                ptrUser = pbuffer;
+                getchar();
+                break;
+
+            case 2:
+                cls();
+                imprimirTodos();
+                break;
+
+            case 3:
+                cls();
+                buscar(ptrControl);
+                break;
+
+            case 4:
+                cls();
+                excluir(ptrControl);
+                cls();
+                imprimirTodos();
+
+                break;
+
+            case 5:
+                cls();
+                if(ptrControl->ContadorDePessoas > 0 ){
+                    bubblesort();
+                    cls();
+                    imprimirTodos();
+
+                }else{
+                    cls();
+                    imprimirTodos();
+                    printf("| Nao foi possivel ordenar: quantidade de usuarios insuficiente ");
+                }
+
+                break;
+
+            case 6:
+                cls();
+                if(ptrControl->ContadorDePessoas > 0 ){
+                    ptrControl->ordenado = false;
+                    while(!ptrControl->ordenado){
+                        SelectionSort();
+                        ptrControl->ordenado = TestaOrdenacao();
+                    }
+                    cls();
+                    imprimirTodos();
+
+                }else{
+                    cls();
+                    imprimirTodos();
+                    printf("| Nao foi possivel ordenar: quantidade de usuarios insuficiente ");
+                    }
+                break;
+
+            case 7:
+                cls();
+                if(ptrControl->ContadorDePessoas > 0) {
+                    InsertionSort();
+                    cls();
+                    imprimirTodos();
+                }else{
+                    cls();
+                    imprimirTodos();
+                    printf("| Nao foi possivel ordenar: quantidade de usuarios insuficiente ");
+
+                }break;
+
+            case 8:
+                cls();
+                if(ptrControl->ContadorDePessoas > 0) {
+                    QuickSortMain();
+                    cls();
+                    imprimirTodos();
+                }else{
+                    cls();
+                    imprimirTodos();
+                    printf("| Nao foi possivel ordenar: quantidade de usuarios insuficiente ");
+                }
+                break;
+
+            case 9:
+                cls();
+                if(ptrControl->ContadorDePessoas > 0) {
+                    ptrControl->ordenado = false;
+                    while(!ptrControl->ordenado){
+                        mergeMain();
+                        ptrControl->ordenado = TestaOrdenacao();
+                    }
+                    cls();
+                    imprimirTodos();
+                }else{
+                    cls();
+                    imprimirTodos();
+                    printf("| Nao foi possivel ordenar: quantidade de usuarios insuficiente ");
+                }
+                free(userPivot);
+                break;
+
+            case 10:
+                cls();
+                printf("|====================== Ate logo! :D =====================|\n");
+                free(pbuffer);
+                return 1;
+                break;
 
 
-	for (;;){
+            default:
+                printf("\nOpcao incorreta!");
+            }
+        }
 
-		printf("\n|=========================[Agenda]========================|\n");
-		printf("| 1-Novo contato\n");
-		printf("| 2-Listar contatos\n");
-		printf("| 3-Buscar\n");
-		printf("| 4-Excluir\n");
-		printf("| 5-BubbleSort\n");
-		printf("| 6-SelectionSort\n");
-		printf("| 7-InsertionSort\n");
-		printf("| 8-QuickSort\n");
-		printf("| 9-MergeSort\n");
-		printf("| 10-Sair\n");
-		printf("|=========================================================|\n");
+    }
+    else
+    if(ptrControl->TipoStruct == 2){
+        for(;;){
+            menuStack();
+            scanf("%d",&ptrControl->OpcaoDoMenu2);
+            switch(ptrControl->OpcaoDoMenu2){
 
-		printf("|Selecione uma das opcoes: ");
+            case 1:
+                cls();
+                push();
+                Display();
+            break;
 
-		scanf("%d",&ptrControl->OpcaoDoMenu);
+            case 2:
+                cls();
+                pop();
+                Display();
+            break;
 
-		switch(ptrControl->OpcaoDoMenu){
+            case 3:
+                cls();
+                Display();
+            break;
 
-			case 1:
-				cls();
-				inserir(ptrUser);
-				ptrUser = pbuffer;
-				getchar();
-				break;
+            case 4:
+                cls();
+                reset();
+                Display();
+            break;
 
-			case 2:
-				cls();
-				imprimirTodos();
-				break;
+            case 5:
+                cls();
+                if(ptrControl->ContadorDePessoas > 0 ){
+                    bubblesort();
+                    cls();
+                    Display();
+                }else{
+                    cls();
+                    Display();
+                    printf("| Nao foi possivel ordenar: quantidade de usuarios insuficiente ");
+                }
+                break;
 
-			case 3:
-				cls();
-				buscar(ptrControl);
-				break;
+            case 6:
+                cls();
+                if(ptrControl->ContadorDePessoas > 0 ){
+                    ptrControl->ordenado = false;
+                    while(!ptrControl->ordenado){
+                        SelectionSort();
+                        ptrControl->ordenado = TestaOrdenacao();
+                    }
+                    cls();
+                    Display();
+                }else{
+                        cls();
+                        Display();
+                        printf("| Nao foi possivel ordenar: quantidade de usuarios insuficiente ");
+                }
+                break;
 
-			case 4:
-				cls();
-				excluir(ptrControl);
-				cls();
-				imprimirTodos();
+            case 7:
+                cls();
+                if(ptrControl->ContadorDePessoas > 0) {
+                    InsertionSort();
+                    cls();
+                }else{
+                    cls();
+                    imprimirTodos();
+                    printf("| Nao foi possivel ordenar: quantidade de usuarios insuficiente ");
 
-				break;
+                }
+                Display();
+                break;
 
-			case 5:
-				cls();
-				if(ptrControl->ContadorDePessoas > 0 ){
-					bubblesort(ptrControl);
-					cls();
-					imprimirTodos();
+            case 8:
+                cls();
+                if(ptrControl->ContadorDePessoas > 0) {
+                    QuickSortMain();
+                    cls();
+                }else{
+                    cls();
+                    printf("| Nao foi possivel ordenar: quantidade de usuarios insuficiente ");
+                }
+                if(ptrControl->TipoStruct == 2 ){
+                    ptrUser = topo;
+                }
+                Display();
+                break;
 
-				}else{
-					cls();
-					imprimirTodos();
-					printf("| Nao foi possivel ordenar: quantidade de usuarios insuficiente ");
-				}
+            case 9:
+                cls();
+                if(ptrControl->ContadorDePessoas > 0) {
+                    ptrControl->ordenado = false;
+                    while(!ptrControl->ordenado){
+                        mergeMain();
+                        ptrControl->ordenado = TestaOrdenacao();
+                    }
+                }else{
+                    cls();
+                    printf("| Nao foi possivel ordenar: quantidade de usuarios insuficiente ");
+                }
+                if(ptrControl->TipoStruct == 2 ){
+                    ptrUser = topo;
+                }
+                free(userPivot);
+                cls();
+                Display();
+                break;
 
-				break;
+            case 10:
+                cls();
+                printf("|====================== Ate logo! :D =====================|\n");
+                free(pbuffer);
+                return 1;
+                break;
 
-			case 6:
-				cls();
-				if(ptrControl->ContadorDePessoas > 0 ){
-					ptrControl->ordenado = false;
-					while(!ptrControl->ordenado){
-						SelectionSort(ptrControl);
-						ptrControl->ordenado = TestaOrdenacao();
-					}
-					cls();
-					imprimirTodos();
 
-				}else{
-					cls();
-					imprimirTodos();
-					printf("| Nao foi possivel ordenar: quantidade de usuarios insuficiente ");
-								}
-				break;
+            default:
+                printf("\nOpcao incorreta!");
+            }
 
-			case 7:
-				cls();
-				if(ptrControl->ContadorDePessoas > 0) {
-					InsertionSort(ptrControl);
-					cls();
-					imprimirTodos();
-				}else{
-					cls();
-					imprimirTodos();
-					printf("| Nao foi possivel ordenar: quantidade de usuarios insuficiente ");
+        }
+    }
+    else
+    if(ptrControl->TipoStruct == 3){
+        cls();
+        printf("|====================== Ate logo! :D =====================|\n");
+        free(pbuffer);
+        free(userPivot);
+        return 0;
+    }
 
-				}break;
-
-			case 8:
-				cls();
-				if(ptrControl->ContadorDePessoas > 0) {
-					QuickSortMain(pbuffer);
-					cls();
-					imprimirTodos();
-				}else{
-					cls();
-					imprimirTodos();
-					printf("| Nao foi possivel ordenar: quantidade de usuarios insuficiente ");
-				}
-				break;
-
-			case 9:
-				cls();
-				if(ptrControl->ContadorDePessoas > 0) {
-					ptrControl->ordenado = false;
-					while(!ptrControl->ordenado){
-						mergeMain(pbuffer);
-						ptrControl->ordenado = TestaOrdenacao();
-					}
-					cls();
-					imprimirTodos();
-				}else{
-					cls();
-					imprimirTodos();
-					printf("| Nao foi possivel ordenar: quantidade de usuarios insuficiente ");
-				}
-				break;
-
-			case 10:
-				cls();
-				printf("|====================== Ate logo! :D =====================|\n");
-				free(pbuffer);
-				free(userPivot);
-				return 1;
-				break;
-			
-
-			default:
-				
-				printf("\nOpção incorreta!");
-		}			
-	}
-
-	return 0;
+    return 1;
 }
