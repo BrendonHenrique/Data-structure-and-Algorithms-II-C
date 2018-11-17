@@ -1,5 +1,46 @@
 # AED1
-Repositório contem algumas resoluções de listas de exercicios da disciplina de Algoritimos e estrutura de dados.
-E a agenda.c é o trabalho principal para a disciplina.
+agenda.c Implements a Schedule with three diferents structures and sorting algorithms.
 
-Atualmente a Agenda está em português, e inteiramente comentada, possui as funções : inserção de contatos, listagem de contatos,  listagem de apenas um contato ,troca de contatos ,limpar tela(cls) ,busca de contatos ,exclusão de contatos e os seguintes algoritimos de ordenação : Bubble Sort ,Selection sort ,Insertion sort ,Quick sort e Merge Sort.
+Menu Stack 
+====================[Schedule Stack]======================|
+| 1-Push 
+| 2-Pop
+| 3-Display Contacts
+| 4-Reset
+| 5-BubbleSort
+| 6-SelectionSort
+| 7-InsertionSort
+| 8-QuickSort
+| 9-MergeSort
+| 10-Exit
+|=========================================================|
+
+menu Queue
+====================[Schedule Queue]======================|
+| 1-Enqueue 
+| 2-Dequeue
+| 3-Display Contacts
+| 4-Reset
+| 5-BubbleSort
+| 6-SelectionSort
+| 7-InsertionSort
+| 8-QuickSort
+| 9-MergeSort
+| 10-Exit
+|=========================================================|
+
+Menu ArrayList
+====================[Schedule Queue]======================|
+| 1-New Contact 
+| 2-Display contacts
+| 3-search
+| 4-Exclude
+| 5-BubbleSort
+| 6-SelectionSort
+| 7-InsertionSort
+| 8-QuickSort
+| 9-MergeSort
+| 10-Exit
+|=========================================================|
+
+Enjoy it! 
