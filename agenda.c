@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include <math.h>
 
 typedef struct control{
 	int ContadorDePessoas;
@@ -24,11 +23,12 @@ typedef struct control{
 typedef struct user{
 	char Nome[20];
 	char Num[10];
+	struct user *next;
 }user;
 
 //Variaveis globais
 variaveis *ptrControl;
-user *ptrUser,*aux,*userPivot,*ptrUserL,*ptrUserR;
+user *ptrUser,*aux,*userPivot,*ptrUserL,*ptrUserR,*ptrAtual;
 void *pbuffer,*topo,*base;
 
 
@@ -206,7 +206,6 @@ void reset(){
     printf("\n|---------------------------------------------------------|");
 
 }
-
 bool empty(){
 	if(ptrControl->TotalDePessoas == 0){
 		return true;
@@ -214,12 +213,10 @@ bool empty(){
 		return false;
 	}
 }
-
 void popDisplay(user *ptrAtual){
 	printf("\n|Nome: %s",ptrAtual->Nome);
 	printf("\n|Numero: %s",ptrAtual->Num);
 }
-
 void Display(){
     ptrUser = topo;
     user *ptrAux;
@@ -243,7 +240,6 @@ void Display(){
         printf("\n|=========================================================|\n");
     }
 }
-
 user* pop(){
     if(!empty()){
         ptrControl->TotalDePessoas--;
@@ -263,7 +259,6 @@ user* pop(){
         printf("\n|=========================================================|\n");
     }
 }
-
 void push(){
 
 	ptrControl->TotalDePessoas++;
@@ -314,7 +309,6 @@ void DisplayQueue(){
         printf("\n|=========================================================|\n");
     }
 }
-
 void enqueue(){
 
     DisplayQueue();
@@ -342,7 +336,6 @@ void enqueue(){
 	ptrUser = aux ;
 
 }
-
 void dequeue(){
     if(!empty()){
 
@@ -422,7 +415,6 @@ void SelectionSort(){
 	    //ptrUser = topo;
 	}
 }
-
 void InsertionSort(){
 	ptrUser = pbuffer + sizeof(variaveis);
 	ptrControl = pbuffer;
@@ -552,9 +544,6 @@ void menuStack(){
     printf("|=========================================================|\n");
     printf("|Select a number: ");
 }
-
-
-
 void menuQueue(){
     printf("\n|====================[Schedule Queue]=====================|\n");
     printf("| 1-Enqueue\n");
@@ -570,8 +559,6 @@ void menuQueue(){
     printf("|=========================================================|\n");
     printf("|Select a number: ");
 }
-
-
 void menuArray(){
     printf("\n|====================[Schedule Array]=====================|\n");
     printf("| 1-New Contact\n");
@@ -592,11 +579,105 @@ void menuInicial(){
     printf("| 1-Array structure\n");
     printf("| 2-Stack Structure\n");
     printf("| 3-Queue Structure\n");
-    printf("| 3-Exit\n");
+    printf("| 4-Exit\n");
     printf("|=========================================================|\n");
     printf("|Select a structure to start your schedule: ");
     scanf("%d",&ptrControl->OpcaoDoMenu);
     ptrControl->TipoStruct = ptrControl->OpcaoDoMenu;
+}
+
+
+//Lista encadeada 
+//Ainda está sendo implementada//
+void menuList(){
+    printf("\n|====================[Schedule Stack]====================|\n");
+    printf("| 1-Insert new node at end\n");
+    printf("| 2-Insert new node at beginning\n");
+    printf("| 3-Insert new node at middle\n");
+    printf("| 4-Delete first node\n");
+    printf("| 5-Delete last node\n");
+    printf("| 6-Delete middle\n");
+    printf("| 7-Delete All\n");
+    printf("| 8-Delete by name\n");
+    printf("| 9-Search an element\n");
+    printf("| 10-Display the linked list\n");
+    printf("| 11-Exit\n");
+    printf("|=========================================================|\n");
+    printf("|Select a number: ");
+}
+void searchInList(){
+
+	ptrControl->NaoEncontrado = true;
+	ptrUser = pbuffer + sizeof(variaveis);
+	ptrAtual = ptrUser;
+
+	printf("\n|Qual nome deseja procurar: ");
+	scanf("%s",ptrControl->NomeDeBusca);
+
+    while(ptrAtual != NULL){
+
+        if((strcmp(ptrAtual->Nome,ptrControl->NomeDeBusca))==0){
+            printf("|---------------------------------------------------------|\n");
+            printf("|Usuario encontrado\n");
+            printf("\n|---------------------------------------------------------|");
+            ptrControl->NaoEncontrado = false;
+            break;
+        }
+
+        ptrAtual = ptrAtual->next;
+    }
+
+	if(ptrControl->NaoEncontrado == true){
+		printf("|Usuario nao encontrado");
+	}
+
+	printf("\n|=========================================================|\n");
+}
+void insertFinal(){
+
+    ptrControl->TotalDePessoas++;
+	pbuffer = realloc(pbuffer,(sizeof(variaveis) +	ptrControl->TotalDePessoas * sizeof(user)));
+	ptrUser = pbuffer+sizeof(variaveis);
+	ptrControl = pbuffer;
+    user *temp;
+    temp = aux;
+
+    if(ptrControl->TotalDePessoas == 1 ){
+        printf("\n|Nome:");
+        scanf("%s",ptrUser->Nome);
+        ptrUser->next = NULL;
+        aux = ptrUser;
+
+    }else if(ptrControl->TotalDePessoas > 1){
+
+        while(temp->next != NULL)
+            temp = temp->next;
+
+        while(ptrUser!=NULL)
+            ptrUser = ptrUser->next;
+
+
+        ptrAtual = ptrUser+sizeof(user);
+        printf("\n|Nome:");
+        scanf("%s",ptrAtual->Nome);
+        temp->next = ptrAtual;
+        ptrAtual->next = NULL;
+        ptrUser = aux;
+    }
+}
+void DisplayList(){
+
+    if(ptrControl->TotalDePessoas == 0){
+        printf("\nEmpty");
+    }else{
+
+       ptrAtual = aux;
+       while(ptrAtual != NULL){
+
+            printf("\n|Nome: %s",ptrAtual->Nome);
+            ptrAtual = ptrAtual->next;
+        }
+    }
 }
 
 int main(){
@@ -976,5 +1057,6 @@ int main(){
         free(userPivot);
         return 0;
     }
+
     return 1;
 }
