@@ -42,7 +42,6 @@ bool delet_list(head* list){
 		free(list);
 		return true;
 	}	
-	printf("nao");
 	return false;
 }
 bool insert_begining(head* list){
