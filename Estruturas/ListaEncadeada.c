@@ -1,172 +1,126 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
-struct elementos {
-
+struct element{
 	int num;
-	char nome[20];
-
+	char name[20];
 };
 
 struct nodo{
-	struct elementos dados;
-	struct nodo* prox;
+	struct element data;
+	struct nodo* next;
 };
 
 typedef struct nodo nodo;
-typedef struct nodo* lista;
+typedef struct nodo* head;
 
-lista* cria_lista(){
-
-	lista* li = (lista*) malloc(sizeof(lista));
-
-	if(li!=NULL)
-		*li = NULL;
+head* create_list(){
+	head* lista = (head*) malloc(sizeof(head));
 	
-	return li;
+	if(lista==NULL){
+		return 0;
+	}
+	(*lista)=NULL;
+	return lista;
 }
-void libera_lista(lista* li){
+bool isEmpty(head* list){
+	if((*list)==NULL)return true;
+	return false;
+}
+bool delet_list(head* list){
 
-	if(li!=NULL){
-
+	if(list != NULL){
 		nodo* aux;
 
-		while((*li)!=NULL){
-			aux = (*li);
-			(*li)=(*li)->prox;
+		while((*list)->next!= NULL){
+			aux = (*list);
+			(*list) = (*list)->next;
 			free(aux);
 		}
-		free(li);
-	}
-}
-int lista_naoIniciada(lista *li){
-	if(li==NULL)
-		return 1;
-	
-	return 0;
-}
-int lista_vazia(lista *li){
-	if((*li)==NULL)
-		return 1;
-	
-	return 0;
-}
-int inserir_inicio(lista *li){
-
-	if(li!=NULL){
-
-		nodo* newNodo = (nodo*) malloc(sizeof(nodo));
-
-		if(newNodo!=NULL){
-
-			printf("\nNumero do novo nodo:");
-			scanf("%d",&newNodo->dados.num);
-			printf("\nNome do novo nodo:");
-			scanf("%s",newNodo->dados.nome);
-
-			newNodo->prox = (*li);//o próximo nodo de newNodo é o primeiro nodo ou seja o conteúdo de li
-			(*li) = newNodo;//
-		}else{
-			return 0;	
-		}
-	}else{
-		return 0;
-	}
-
-	return 1;
-}
-int inserir_final(lista* li){
-
-	if(lista_naoIniciada(li)){
-		printf("\nnao iniciada!");
-		return 0;
-
-	}else{	
-		nodo* aux;
-		aux = (*li);
-
-		while(aux->prox != NULL){
-			aux = aux->prox;
-		}//encontrei o ultimo
-
-		nodo* newNodo = (nodo*) malloc(sizeof(nodo));
-		if(newNodo!=NULL){//crie um novo nodo e o preenche
-
-			printf("\nNumero do novo nodo:");
-			scanf("%d",&newNodo->dados.num);
-			printf("\nNome do novo nodo:");
-			scanf("%s",newNodo->dados.nome);
 		
-			aux->prox = newNodo;
-			newNodo = NULL;
-			
-			return 1;
-		}
-	}
-
-	printf("\nNao inserido!");
-	return 0;
+		free(list);
+		return true;
+	}	
+	printf("nao");
+	return false;
 }
-int imprimir_lista(lista *li){
+bool insert_begining(head* list){
 
-	if(lista_naoIniciada(li))
-		return 0;
-	if(lista_vazia(li))
-		return 0;
+	if(list == NULL)return false;
+
+	nodo* newList;
+	newList = (nodo*) malloc(sizeof(nodo));
 	
-	nodo* aux;
-	int cont = 1 ;
-	aux = (*li);
+	if(newList==NULL)return false;
 
-	while(aux!=NULL){
-		printf("\n[#%d]\n[#Nome]->%s\n[#Num]->%d\n",
-			cont,aux->dados.nome,aux->dados.num);
+	newList->next = (*list);
+	(*list) = newList;
 
-		cont++;
-		aux = aux->prox;
-	}
+	printf("\nNumero:");
+	scanf("%d",&newList->data.num);
+	printf("\nNome: ");
+	scanf("%s",newList->data.name);
 
-
-	return 1;
+	return true;
 }
+bool insert_end(head* list){
+	if(isEmpty(list)){ 
+		insert_end(list);
+	}else{
 
-char* resultado(int y){
-	if(y == 0) { return "Sucess\n"; }else{  return "Fail\n";}
+		nodo* aux ;
+		if(aux!=NULL){ 
+			aux = (*list);
+			
+			while(aux->next != NULL){
+				aux = aux->next;
+			}
+
+			printf("\nNumero:");
+			scanf("%d",&aux->data.num);
+			printf("\nNome: ");
+			scanf("%s",aux->data.name);
+			aux->next = NULL;
+
+		}else return false;
+		
+	} 
+	return true;
+}
+bool display_list(head* list){
+
+	if(isEmpty(list)){
+		return false;
+	}else{
+
+		nodo* aux;
+		aux = (*list);
+
+		while(aux!=NULL){
+			
+			printf("\nNumero: %d",aux->data.num);
+			printf("\nNome: %s",aux->data.name);
+
+			aux = aux->next;
+		}
+		return true; 
+	}
 }
 
 int main(int argc, char const *argv[])
 {
-	int x;
-	
-	lista* newList;
-	newList = cria_lista();
-	printf("\nEnd da nova lista->%p\n",newList);
+	bool test;
 
-	for (int i = 0; i < 3; ++i)
-	{
-		if(i==0){
-			x =inserir_inicio(newList);
-			if(x==1){
-				printf("\nInserido com sucesso\n");
-			}else{
-				printf("\nFalha ao inserir\n");
-			}
-		}
-		else{
-			x = inserir_final(newList);
-			if(x==1){
-				printf("\nInserido com sucesso\n");
-			}else{
-				printf("\nFalha ao inserir\n");
-			}
-		}
-	}
+	head* newList;
+	newList = create_list();
 
-	imprimir_lista(newList);
-	libera_lista(newList);
-	x = imprimir_lista(newList);
-
-	printf("%s",resultado(x));
+	printf("\n%s\n",isEmpty(newList) ? "true -> isEmpty":"false -> isEmpty");
+	printf("\n%s\n",insert_begining(newList) ?  "true -> Insert Beginning":"false -> Insert Beginning");
+	printf("\n%s\n",insert_begining(newList) ?  "true -> insert end":"false -> insert end");	
+	printf("\n%s\n",display_list(newList) ?  "true -> display list":"false -> display list");
+	printf("\n%s\n",delet_list(newList) ?  "true -> isEmpty":"false -> isEmpty");
+			
 
 	return 0;
 }
