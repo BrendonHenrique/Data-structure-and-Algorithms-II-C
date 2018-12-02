@@ -96,7 +96,7 @@ int ImprimirComParenteses(raiz MinhaRaiz){
 	if(*MinhaRaiz !=NULL){
 
 		printf("(");
-		printf("%d",(*MinhaRaiz)->info);
+		printf("%d",(*MinhaRaiz)->valor);
 		a=ImprimirComParenteses(&((*MinhaRaiz)->esq));
 		b=ImprimirComParenteses(&((*MinhaRaiz)->dir));
 		if(a==0 && b==0)printf("()");
