@@ -58,17 +58,17 @@ int inserirNodo(raiz MinhaRaiz,int valor){
 	return 1;
 }
 
-int somaNosNaoFolhas(raiz MinhaRaiz,int* x){
+int somaNosFolhas(raiz MinhaRaiz,int* x){
 	int a,b;
 	a = b = 1;
 
 	if((*MinhaRaiz)!=NULL){
 
-		*x+=printf("_");
-		a = somaNos(&((*MinhaRaiz)->esq),x);
-		b = somaNos(&((*MinhaRaiz)->dir),x); 
+		//*x+=printf("_");
+		a = somaNosFolhas(&((*MinhaRaiz)->esq),x);
+		b = somaNosFolhas(&((*MinhaRaiz)->dir),x); 
 		
-		if(a==0 && b==0)*x-=1;
+		if(a==0 && b==0)*x+=1;
 
 	}else{
 		return 0;
@@ -91,7 +91,7 @@ int main(int argc, char const *argv[])
 	soma = (int*)malloc(sizeof(int));
 	*soma = 0;
 
-	somaNosNaoFolhas(r1,soma);
+	somaNosFolhas(r1,soma);
 	printf("\n%d",*soma);
 
 	return 0;
