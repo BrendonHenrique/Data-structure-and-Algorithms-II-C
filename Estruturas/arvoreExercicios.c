@@ -76,6 +76,7 @@ int somaNosFolhas(raiz MinhaRaiz,int* x){
 
 	return 1;
 }
+
 int somaNos(raiz MinhaRaiz,int* x){
 	if((*MinhaRaiz)!=NULL){
 
@@ -85,6 +86,31 @@ int somaNos(raiz MinhaRaiz,int* x){
 	}
 		return (*x);
 }
+
+int ImprimirComParenteses(raiz MinhaRaiz){
+	if(MinhaRaiz == NULL)return 0;
+
+	int a=1;
+	int b=1;
+
+	if(*MinhaRaiz !=NULL){
+
+		printf("(");
+		printf("%d",(*MinhaRaiz)->info);
+		a=ImprimirComParenteses(&((*MinhaRaiz)->esq));
+		b=ImprimirComParenteses(&((*MinhaRaiz)->dir));
+		if(a==0 && b==0)printf("()");
+		if(a==0 && b!=0)printf("()");
+		if(a!=0 && b==0)printf("()");
+     	
+	}else{
+		return 0;
+	}
+	printf(")");
+
+}
+
+
 
 int main(int argc, char const *argv[])
 {
