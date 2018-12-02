@@ -76,6 +76,15 @@ int somaNosFolhas(raiz MinhaRaiz,int* x){
 
 	return 1;
 }
+int somaNos(raiz MinhaRaiz,int* x){
+	if((*MinhaRaiz)!=NULL){
+
+		*x += printf("_");
+		somaNos(&((*MinhaRaiz)->esq),x);
+		somaNos(&((*MinhaRaiz)->dir),x); 
+	}
+		return (*x);
+}
 
 int main(int argc, char const *argv[])
 {
