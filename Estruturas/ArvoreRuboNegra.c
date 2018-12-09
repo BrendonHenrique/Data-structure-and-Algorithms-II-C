@@ -1,204 +1,158 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 
-#define RED   1
 #define BLACK 0
+#define RED 1
 
-struct Node{
-    int          value;
-    char         color;
-    struct Node *left;
-    struct Node *right;
-    struct Node *parent;
+struct no{
+	int valor;
+	int color;
+	struct no* esq;
+	struct no* dir;
+	struct no* pai;
 };
+typedef struct no no;
+typedef struct no* nodo;
+typedef struct no** raiz;
 
-typedef struct Node No;
-typedef struct Node* Node;
-typedef struct Node** raiz;
+nodo pai = NULL;
 
-
-No NullNode;
-Node T_Nil = &NullNode;
-Node newRaiz = NULL;
-
-Node newNode(int value){
-
-    Node temp    = (Node) malloc(sizeof(No));
-    temp->value  = value;
-    temp->color  = RED;
-    temp->left   = NULL;
-    temp->right  = NULL;
-    temp->parent = NULL;
-
-    return temp;
+raiz cria(){
+	raiz newRaiz = (raiz) malloc(sizeof(nodo));
+	if(newRaiz == NULL)
+		return 0;
+	*newRaiz = NULL;
+	return newRaiz;
 }
+nodo GetAvo(nodo no){
+	if(no == NULL && no->pai == NULL)
+		return NULL;
 
-void rotateLeft( raiz newRaiz, Node aux2){
-
-    Node aux1  = aux2->left;    
-    aux2->left  = aux1->right;    
-   
-    if (aux1->right != T_Nil)
-        aux1->right->parent = aux2;
-    
-    aux1->parent = aux2->parent;  
-    
-    if (aux2->parent == T_Nil)
-       *newRaiz = aux1;
-    
-    else if (aux2 == aux2->parent->right)
-       aux2->parent->right = aux1;
-    
-    else
-       aux2->parent->left  = aux1;
-   
-    aux1->right  = aux2;         
-    aux2->parent = aux1;
+	return no->pai->pai;
 }
+nodo GetTio(nodo no){
+	if(no == NULL)
+		return NULL;
 
-void rotateRight(raiz newRaiz, Node aux1){
+	nodo avo = GetAvo(no);
 
-    Node aux2  = aux1->right;    
-    aux1->right = aux2->left;     
-   
-    if (aux2->left != T_Nil)
-        aux2->left->parent = aux1;
-   
-    aux2->parent = aux1->parent;  
-    
-    if (aux1->parent == T_Nil)
-       *newRaiz = aux2;
-    
-    else if (aux1 == aux1->parent->left)
-       aux1->parent->left = aux2;
-    
-    else
-       aux1->parent->right = aux2;
-    
-    aux2->left   = aux1;            
-    aux1->parent = aux2;  
+	if(avo == NULL) 
+		return NULL;
+
+	if(no->pai == avo->esq){
+		return avo->dir;
+	}else{
+		//se nao é o filho a esquerda
+		return avo->esq;
+	}
 }
+void RotacaoL(nodo no){
+	nodo aux = no->esq;
+	no->esq = aux->dir;
+	aux->dir =  no;
+	no = aux;
+}
+void RotacaoR(nodo no){
+	nodo aux = no->dir;
+	no->dir = aux->esq;
+	aux->esq = no;
+	no = aux;
+}
+void insert(nodo no){
+	if(no->pai == NULL || no->pai->color == BLACK){
+		no->color = BLACK;
+	}else{
+		
+		nodo u = GetTio(no);
+		nodo g = GetAvo(no);
 
-void FixUp(raiz newRaiz, Node New){
-
-    Node temp;
-    
-    while(New->parent->color == RED){
-
-        if(New->parent->value == New->parent->parent->value){
-
-            temp = New->parent->parent->right;
-            
-            if(temp->color == RED){
-
-                New->parent->color = BLACK;
-                temp->color = BLACK;
-                New->parent->parent->color = RED;
-                New = New->parent->parent;
-            }
-
-            else if(New->value == New->parent->right->value){
-
-                New = New->parent;
-                rotateRight(newRaiz,New);
-            }
-
-            New->parent->color = BLACK;
-            New->parent->parent->color = RED;
-            rotateLeft(newRaiz,New->parent->parent);
-        }
-        else{
-
-            temp = New->parent->parent->left;
-            if(temp->color == RED){
-
-                New->parent->color = BLACK;
-                New->color = BLACK;
-                New->parent->parent->color = RED;
-                New = New->parent->parent;
-            }
-            else if(New->value == New->parent->left->value){
-
-                New = New->parent;
-                rotateLeft(newRaiz,New);
-            }
-
-            New->parent->color = BLACK;
-            New->parent->parent->color = RED;
-            rotateRight(newRaiz, New->parent->parent);
-        }
+		if((u != NULL) && (u->color == RED)){
+			no->pai->color = BLACK;
+			u->color = BLACK;
+			g->color = RED;
+			
+			if(no->pai == NULL)
+				no->color = BLACK;
+		}else{
+	
+			nodo g = GetAvo(no);
+			
+			if((no == no->pai->dir) && (no->pai == g->esq)){
+				RotacaoR(no->pai);
+				no = no->dir;
+			
+			}else{
+				no->pai->color = BLACK;
+				g->color = RED;
+				if((no == no->pai->esq) && (no->pai == g->esq)){
+					RotacaoL(g);
+				}else{
+					RotacaoR(g);
+				}
+			}
+		}
+	}
+}
+nodo inserir(int novo,raiz p){
+    if(*p == NULL){
+        *p = malloc(sizeof(no));
+        (*p)->valor = novo;
+        (*p)->esq = NULL;
+        (*p)->dir = NULL;
+        (*p)->pai = pai;
+        return *p;
     }
-    newRaiz[0]->color = BLACK;
-}
-
-int redBlackInsert(raiz newRaiz, int value){
-
-    Node aux3 =  newNode(value);
-    Node aux2 =  T_Nil;
-    Node aux1 = *newRaiz;
-
-    while (aux1 != T_Nil) {
-       aux2 = aux1;
-      
-       if (aux3->value < aux1->value)
-          aux1 = aux1->left;
-    
-       else
-          aux1 = aux1->right;
+    else if(novo < (*p)->valor){
+        pai = *p;
+        inserir(novo,&(*p)->esq);
+        return *p;
     }
-
-    aux3->parent = aux2;
-    
-    if (aux2 == T_Nil)
-       *newRaiz = aux3;
-
-    else if (aux3->value < aux2->value)
-        aux2->left  = aux3;
-   
-    else
-        aux2->right = aux3;
-
-    aux3->left  = T_Nil;
-    aux3->right = T_Nil;
-    aux3->color = RED;
-
-    FixUp(newRaiz,aux3);
-
-}
-
-bool DisplayPreOrdem(raiz newRaiz){
-    if(*newRaiz == NULL){
-        return -1;
-    }else{
-        printf("%d\n",(*newRaiz)->value);
-        DisplayPreOrdem(&((*newRaiz))->left);
-        DisplayPreOrdem(&((*newRaiz))->right);
-        
-        return true;
+    else if(novo > (*p)->valor){
+        pai = *p;
+        inserir(novo,&(*p)->dir);
+        return *p;
     }
 }
-
-bool DisplayEmOrdem(raiz newRaiz){
-    if(*newRaiz == NULL){
-        return -1;
-    }else{
-
-        DisplayEmOrdem(&((*newRaiz))->left);
-        printf("%d\n",(*newRaiz)->value);
-        DisplayEmOrdem(&((*newRaiz))->right);
-        return true;
-    }
+void imprimePre(raiz newRaiz){
+	if(*newRaiz == NULL)
+		return;
+	printf("\n%d",(*newRaiz)->valor);
+	imprimePre(&((*newRaiz)->esq));
+	imprimePre(&((*newRaiz)->dir));
 }
+void imprimeEm(raiz newRaiz){
+	if(*newRaiz == NULL)
+		return;
+	imprimeEm(&((*newRaiz)->esq));
+	printf("\n%d",(*newRaiz)->valor);
+	imprimeEm(&((*newRaiz)->dir));
+}
+void imprimePos(raiz newRaiz){
+	if(*newRaiz == NULL)
+		return;
+	imprimePos(&((*newRaiz)->esq));
+	imprimePos(&((*newRaiz)->dir));
+	printf("\n%d",(*newRaiz)->valor);
+}
+bool Buscar(int valor,raiz newRaiz){
 
-bool DisplayPosOrdem(raiz newRaiz){
-    if(*newRaiz == NULL){
-        return -1;
-    }else{
-        DisplayPosOrdem(&(*(newRaiz))->left);
-        DisplayPosOrdem(&(*(newRaiz))->right);
-        printf("%d\n",((*newRaiz))->value);
+	nodo atual = *newRaiz;
+
+ 	while(atual!= NULL){
+ 		
+ 	 	if(atual->valor == valor){
+	        return true;
+	    }
+	 
+	    if(valor < atual->valor){
+	    	atual = atual->esq;
+	    }else{
+	    	atual = atual->dir;
+	    }
     }
+    
+    return false;
 }
 
 void cls(){
@@ -214,52 +168,63 @@ void cls(){
      printf("\e[H\e[2J");
      #endif
 }
-
 void menuTreeRB(){
     printf("\n|===================[Arvore Rubo Negra]===================|\n");
     printf("| 1-Inserir na Arvore\n");
     printf("| 2-Listar por Pre Ordem\n");
     printf("| 3-Listar Em Ordem\n");
     printf("| 4-Listar por Pos Ordem\n");
+    printf("| 5-Buscar algum numero\n");
+    printf("| 6-Sair\n");
     printf("|=========================================================|\n");
     printf("|Selecione : ");
 }
+int main(int argc, char const *argv[])
+{
+	raiz newRaiz = cria();
+	int x,y;
 
 
-int main(int argc, char const *argv[]){
+	for (;;){
+		menuTreeRB();
+		scanf("%d",&x);
 
-    int choice;
-    int x;
+		switch(x){
+			case 1:
+				cls();
+				printf("\nQual numero inserir?");
+				scanf("%d",&y);
+    			insert(inserir(y,newRaiz));	
+			break;
 
-    Node Root = T_Nil;
-    
-    for(;;){
-        
-        menuTreeRB();
-        scanf("%d",&choice);
+			case 2:	
+				cls();
+				imprimePre(newRaiz);
+			break;
+			case 3:
+				cls();
+				imprimeEm(newRaiz);
+			break;
+			case 4:
+				cls();
+				imprimePos(newRaiz);
+			break;
+			case 5:
+				cls();
+				printf("\nQual numero buscar?");
+				scanf("%d",&y);
+				printf("\n%s",Buscar(y,newRaiz) ? "Encontrado":"Nao encontrado");
+			break;
+			case 6:
+				cls();
+				printf("\nThkx ! c'u!");
+				return 1;
+			break;
+			default:
+				printf("\nEscolha incorreta!");
+			break;
+		}
+	}
 
-        switch (choice){
-
-            case 1:
-                cls();
-                printf("\nQual valor inserir?");
-                scanf("%d",&x);
-                redBlackInsert(&Root, x);
-            break;
-            case 2:
-                cls();
-                DisplayPreOrdem(&Root);
-            break;
-            case 3:
-                cls();
-                DisplayEmOrdem(&Root);
-            break;
-            case 4:
-                cls();
-                DisplayPosOrdem(&Root);
-            break;
-        }    
-    }
-
-    return 0;
+	return 0;
 }
