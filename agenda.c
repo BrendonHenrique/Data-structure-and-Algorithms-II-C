@@ -34,10 +34,11 @@ void *pbuffer,*topo,*base;
 
 
 
-//Controlhe agenda array//
+//Pensando na UX , esse método implementa um 'clear" na tela 
 void cls(){
 
      //testa se o sistema operacional está definido como LINUX ou WINDOWS
+	
      //código especifico para linux
      #ifdef __linux__
      printf("\e[H\e[2J");
