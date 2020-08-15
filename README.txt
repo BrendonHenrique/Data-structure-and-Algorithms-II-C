@@ -1,4 +1,4 @@
-# Data-structure-and-Algorithms-I-C
+# Schedule-C
 
 This repository was created to data sctructure and algorithms I class at Federal University of Pelotas.
 Language used : C 
