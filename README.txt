@@ -1,6 +1,6 @@
 # Schedule-C
 
-This repository was created to data sctructure and algorithms I class at Federal University of Pelotas.
+This repository was created to data sctructure and algorithms class at Federal University of Pelotas.
 Language used : C 
 
 agenda.c Implements a Schedule with three diferents structures and sorting algorithms.
